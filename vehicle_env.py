@@ -120,6 +120,8 @@ class Environment:
             print(1)
     '''
     需要根据density 的设置，产生random生产的上限
+
+    强制车的间距： 可以evenly distributed 
     '''
     def __repr__(self):
         pass 
