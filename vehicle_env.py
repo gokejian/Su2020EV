@@ -113,7 +113,7 @@ class Environment:
         # ((self.cursor - 5.74) > 0 ) # here we take a maximum small car with minimum spacing of 1m as a threshold 
         HALF_LANE_WID = self.roadwid/4 
         index = 1 
-        lane = 0  
+        lane = 0 # 0 or 1 to represent two lanes 
         curr_lane_density = 0
         succeed_flag = 0
         while self.is_valid(curr_lane_density): 
@@ -121,15 +121,25 @@ class Environment:
             spacing , potential_density = cal_spacing_and_density(curr_lane_density,self.roadlen,a_vehicle)
             #(env_density, curr_density, roadlen, a_vehicle):
             if (potential_density < self.density) and (self.cursor > 5):
-                cent_position = 1
-                physical_range = 
-                
-
-
-            
-
-
-
+                rand_width_location = HALF_LANE_WID + random.randrange(-HALF_LANE_WID/2 , + HALF_LANE_WID/2)
+                cent_position = (self.cursor - spacing - a_vehicle.length/2 , rand_width_location + lane * self.roadwid/2) # lane is 0 or 1 
+                physical_range = ((cent_position - a_vehicle.lenth/2, cent_position + a_vehicle.length/2)
+                                 , (cent_position - a_vehicle.width/2, cent_position + a_vehicle.width/2))
+                self.env_status.append([index, a_vehicle.id, lane, cent_position, physical_range, a_vehicle.speed])
+                if a_vehicle.id == 0:
+                    self.num_smallV += 1 
+                elif a_vehicle.id == 1:     
+                    self.num_mediumV += 1
+                elif a_vehicle.id == 2:
+                    self.num_largeV += 1
+                curr_lane_density = potential_density
+                self.cursor = cent_position - a_vehicle.length/2
+                index += 1
+            else: 
+                if lane == 0:
+                    lane = 1 
+                    self.cursor = self.roadlen
+        return self.env_status  
 
     def __repr__(self):
         pass 

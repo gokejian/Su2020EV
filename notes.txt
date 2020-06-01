@@ -3,6 +3,7 @@ We are more likely to have a speed that does not differ too much. Now I only use
 
 Calculate method: Assume we have evenly spacing: we use a simple test calculation 2.5 +(2.5/density) * 0.447 = base + 2.5 (scalar / density in range 0.1 to 0.9) * 0.447 because conversion from mph to mps is 0.447 
 
+no data hiding in the code as not needed. 
 '''
 
 
