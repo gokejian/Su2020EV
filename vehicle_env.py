@@ -12,10 +12,7 @@ __author__ = "Haoran Su, Kejian Shi"
 __version__ = "1.0.1"
 
 
-
-
 #'{} {}'. format(self.first, self. last) 
-
 
 
 class SmallV():
@@ -71,26 +68,19 @@ class Environment:
         self.num_largeV = 0
         self.max_speed = 20
         self.density = density 
-        self.curr_lane = 0 # 0 or 1 as 2-lane raod 
-        self.curr_lane_density = 0
         self.roadlen = roadlen
         self.roadwid = roadwid
         self.cur_cursor = roadlen # start position to fill vehicles 
         self.env_status = [] # keep track of all vehicle information as array of [int:vehicle_index, int:type, int: lane, tuple:center_position, tuple<tuple>: physical_range_at_the_environment, int:speed] 
-       
-'''
-
-while True:
-...     try:
-...         x = int(input("Please enter a number: "))
-...         break
-...     except ValueError:
-...         print("Oops!  That was no valid number.  Try again...")
-
-'''
-
-    def position_valid(self, potential_vehicle):
         
+    '''
+    while True:
+        try:
+        x = int(input("Please enter a number: "))
+        except ValueError:
+        print("Oops!  That was no valid number.  Try again...")
+
+    '''
 
     def get_rand_vehicle(self):
         '''
@@ -102,45 +92,40 @@ while True:
     '''
     @input road car density 取一个 range: 还是取0-1, 密度按 m/v 计算，让所有值落在0-1区间: normalize 
     @return car index, position, (head_pos,rear_pos) 
-
     '''
+
     def is_valid(self):
         return (self.curr_density < self.density) and (self.cur_cursor > 5) # otherwise cannot fit into any car by the 4m car length and 1m of minimum spacing
 
     def generate_road_env(self):  
-       '''
-       1. while not less than minimum length requirement (with min of 1m spacing) get a car # The pre-checking is tough. 
-       2. generate_car and set a flag 
-       3. calculate spacing needed
-       3. 
-       3。check if rear will exceed the bound, or that it exceed density 
-       4. if not then put the car. with center position being half length + center of uni lane with small margin of error. 
-            update the env_status by append. and update the class variable 
-       5. if so, give it a small vehicle if possible. Use break and continue wisely 
-       6. switch another lane, repeat the process 
-       '''
+        '''
+        1. while not less than minimum length requirement (with min of 1m spacing) get a car # The pre-checking is tough. 
+        2. generate_car and set a flag 
+        3. calculate spacing needed
+        3。check if rear will exceed the bound, or that it exceed density 
+        4. if not then put the car. with center position being half length + center of uni lane with small margin of error. 
+        update the env_status by append. and update the class variable 
+        5. if so, give it a small vehicle if possible. Use break and continue wisely 
+        6. switch another lane, repeat the process 
+        '''
         # [int:vehicle_index, int:type, int: lane, tuple:center_position, tuple<tuple>: physical_range_at_the_environment (), int:speed] 
 
-       # ((self.cur_cursor - 5.74) > 0 ) # here we take a maximum small car with minimum spacing of 1m as a threshold 
+        # ((self.cur_cursor - 5.74) > 0 ) # here we take a maximum small car with minimum spacing of 1m as a threshold 
+        HALF_LANE_WID = self.roadwid/4 
+        index = 1 
+        lane = 0  
+        curr_lane_density = 0
+        physical_range = ()
+        succeed_flag = 0
         while self.is_valid(): 
+            a_vehicle = get_rand_vehicle()
+            spacing , potential_density = cal_spacing_and_density(self.density,curr_lane_density,self.roadlen,a_vehicle)
+            #(env_density, curr_density, roadlen, a_vehicle):
+             if (potential_density < curr_lane_density) and (self.cur_cursor
+
             
 
-        index = 1 
-        while 
 
-        '''
-        肯定是，density 过了， 或次小的车已经放不下了
-
- if a_vehicle.id == 0:
-            self.num_smallV += 1 
-        elif a_vehicle.id == 1:     
-            self.num_mediumV += 1
-        elif a_vehicle.id == 2:
-            self.num_largeV += 1
-
-        ''''
-        while self.is_valid():
-            print(1)
 
 
     def __repr__(self):
@@ -160,3 +145,15 @@ room = [[choice(classes)() for _ in range(2)] for __ in range(2)]
        for column in row:
            da
     '''
+
+        '''
+        肯定是，density 过了， 或次小的车已经放不下了
+
+ if a_vehicle.id == 0:
+            self.num_smallV += 1 
+        elif a_vehicle.id == 1:     
+            self.num_mediumV += 1
+        elif a_vehicle.id == 2:
+            self.num_largeV += 1
+
+        ''''
