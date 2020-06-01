@@ -45,7 +45,7 @@ class LargeV():
 def generate_num_margin_error(num, error_range):
     return random.randrange(num - error_range , num + error_range)
     
-def cal_spacing_and_density(env_density, curr_density, roadlen, a_vehicle):
+def cal_spacing_and_density(curr_density, roadlen, a_vehicle):
     '''get a safe spacing that ensures a "1.5 second rule" given nature of NYC 
     '''
     safe_spacing = a_vehicle.speed * 1.5 - 0.5 * (a_vehicle.max_acceler * 3) * 1.5^2  # braking decleration is about 3-4 times than acceleration
@@ -70,7 +70,7 @@ class Environment:
         self.density = density 
         self.roadlen = roadlen
         self.roadwid = roadwid
-        self.cur_cursor = roadlen # start position to fill vehicles 
+        self.cursor = roadlen # start position to fill vehicles 
         self.env_status = [] # keep track of all vehicle information as array of [int:vehicle_index, int:type, int: lane, tuple:center_position, tuple<tuple>: physical_range_at_the_environment, int:speed] 
         
     '''
@@ -94,8 +94,8 @@ class Environment:
     @return car index, position, (head_pos,rear_pos) 
     '''
 
-    def is_valid(self):
-        return (self.curr_density < self.density) and (self.cur_cursor > 5) # otherwise cannot fit into any car by the 4m car length and 1m of minimum spacing
+    def is_valid(self,curr_density):
+        return (curr_density < self.density) and (self.cursor > 5) # otherwise cannot fit into any car by the 4m car length and 1m of minimum spacing
 
     def generate_road_env(self):  
         '''
@@ -110,18 +110,21 @@ class Environment:
         '''
         # [int:vehicle_index, int:type, int: lane, tuple:center_position, tuple<tuple>: physical_range_at_the_environment (), int:speed] 
 
-        # ((self.cur_cursor - 5.74) > 0 ) # here we take a maximum small car with minimum spacing of 1m as a threshold 
+        # ((self.cursor - 5.74) > 0 ) # here we take a maximum small car with minimum spacing of 1m as a threshold 
         HALF_LANE_WID = self.roadwid/4 
         index = 1 
         lane = 0  
         curr_lane_density = 0
-        physical_range = ()
         succeed_flag = 0
-        while self.is_valid(): 
+        while self.is_valid(curr_lane_density): 
             a_vehicle = get_rand_vehicle()
-            spacing , potential_density = cal_spacing_and_density(self.density,curr_lane_density,self.roadlen,a_vehicle)
+            spacing , potential_density = cal_spacing_and_density(curr_lane_density,self.roadlen,a_vehicle)
             #(env_density, curr_density, roadlen, a_vehicle):
-             if (potential_density < curr_lane_density) and (self.cur_cursor
+            if (potential_density < self.density) and (self.cursor > 5):
+                cent_position = 1
+                physical_range = 
+                
+
 
             
 
