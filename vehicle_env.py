@@ -12,9 +12,6 @@ __author__ = "Haoran Su, Kejian Shi"
 __version__ = "1.0.1"
 
 
-#'{} {}'. format(self.first, self. last) 
-
-
 class SmallV():
     def __init__(self):
         self.id = 0
@@ -57,10 +54,6 @@ def cal_spacing_and_density(curr_density, roadlen, a_vehicle):
     return spacing , new_density 
 
 class Environment:  
-    '''
-    each car, index,length,physical range on the road, acceleration, env里分别有多少大中小车 (total不需单独出))  
-    需要 每辆车的center position, 关键还需要验证是不是合理（out_of_bounds），通过那个和长度算出 head 和 rear (stretch)
-    '''
     def __init__(self, roadlen = 200, roadwid = 10, density = random.randrange(0.1,0.9)):
         self.classes = (SmallV,MediumV,LargeV)
         self.num_smallV = 0
@@ -76,10 +69,8 @@ class Environment:
     '''
     while True:
         try:
-        x = int(input("Please enter a number: "))
         except ValueError:
-        print("Oops!  That was no valid number.  Try again...")
-
+        print("O")
     '''
 
     def get_rand_vehicle(self):
@@ -99,14 +90,7 @@ class Environment:
 
     def generate_road_env(self):  
         '''
-        1. while not less than minimum length requirement (with min of 1m spacing) get a car # The pre-checking is tough. 
-        2. generate_car and set a flag 
-        3. calculate spacing needed
-        3。check if rear will exceed the bound, or that it exceed density 
-        4. if not then put the car. with center position being half length + center of uni lane with small margin of error. 
-        update the env_status by append. and update the class variable 
-        5. if so, give it a small vehicle if possible. Use break and continue wisely 
-        6. switch another lane, repeat the process 
+        if rear will exceed the bound, or that it exceed density give it a small vehicle if possible.
         '''
         # [int:vehicle_index, int:type, int: lane, tuple:center_position, tuple<tuple>: physical_range_at_the_environment (), int:speed] 
 
@@ -115,9 +99,9 @@ class Environment:
         index = 1 
         lane = 0 # 0 or 1 to represent two lanes 
         curr_lane_density = 0
-        succeed_flag = 0
+        swith_car_flag = 0
         while self.is_valid(curr_lane_density): 
-            a_vehicle = get_rand_vehicle()
+            a_vehicle = self.get_rand_vehicle()
             spacing , potential_density = cal_spacing_and_density(curr_lane_density,self.roadlen,a_vehicle)
             #(env_density, curr_density, roadlen, a_vehicle):
             if (potential_density < self.density) and (self.cursor > 5):
@@ -137,36 +121,17 @@ class Environment:
                 index += 1
             else: 
                 if lane == 0:
+                    print("actual right lane density = ", curr_lane_density)
                     lane = 1 
                     self.cursor = self.roadlen
+                    curr_lane_density = 0
+                    continue
         return self.env_status  
 
     def __repr__(self):
-        pass 
+        print("Env status: [{}]") 
+        
 
 
 if __name__ == "__main__":
     pass
-
-    '''
-    from random import choice
-classes = (RoomSpider, RoomSoldier, RoomDragon, ...)
-room = [[choice(classes)() for _ in range(2)] for __ in range(2)]
-
-   grid = [[1]*8 for i in range(8)]
-   for row in grid:
-       for column in row:
-           da
-    '''
-
-        '''
-        肯定是，density 过了， 或次小的车已经放不下了
-
- if a_vehicle.id == 0:
-            self.num_smallV += 1 
-        elif a_vehicle.id == 1:     
-            self.num_mediumV += 1
-        elif a_vehicle.id == 2:
-            self.num_largeV += 1
-
-        ''''
