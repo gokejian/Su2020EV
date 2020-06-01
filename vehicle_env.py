@@ -6,7 +6,7 @@
 import os 
 import sys 
 import random 
-import enum
+
  
 __author__ = "Haoran Su, Kejian Shi"
 __version__ = "1.0.1"
@@ -107,18 +107,19 @@ class Environment:
         curr_lane_density = 0
         swith_car_flag = 0
         while self.is_valid(curr_lane_density): 
-            print("while loop is running")
-            print("index is ", index )
+            # print("while loop is running")
+            # print("index is ", index )
             
             a_vehicle = self.get_rand_vehicle()
             spacing , potential_density = cal_spacing_and_density(curr_lane_density,self.roadlen,a_vehicle)
             #(env_density, curr_density, roadlen, a_vehicle):
             if (potential_density < self.density) and (self.cursor > 5):
-                print("enters if (potential_density < self.density) and (self.cursor > 5): ")
+                # print("enters if (potential_density < self.density) and (self.cursor > 5): ")
                 rand_width_location = HALF_LANE_WID + round(random.uniform (-HALF_LANE_WID/2 , + HALF_LANE_WID/2),2)
-                cent_position = (self.cursor - spacing - a_vehicle.length/2 , rand_width_location + lane * self.roadwid/2) # lane is 0 or 1 
-                physical_range = ((cent_position[0] - a_vehicle.length/2, cent_position[0] + a_vehicle.length/2)
-                                 , (cent_position[1] - a_vehicle.width/2, cent_position[1] + a_vehicle.width/2))
+                cent_position = (round(self.cursor - spacing - a_vehicle.length/2,2) , round(rand_width_location + lane * self.roadwid/2,2)) # lane is 0 or 1 
+                physical_range = ((round(cent_position[0] - a_vehicle.length/2,2) ,    round(cent_position[0] + a_vehicle.length/2,2))
+                                 , (round(cent_position[1] - a_vehicle.width/2,2) , round(cent_position[1] + a_vehicle.width/2,2)))
+                    
                 self.env_status.append([index, a_vehicle.id, lane, cent_position, physical_range, a_vehicle.speed])
                 if a_vehicle.id == 0:
                     self.num_smallV += 1 
@@ -130,9 +131,9 @@ class Environment:
                 self.cursor = cent_position[0] - a_vehicle.length/2
                 index += 1
             else: 
-                print("enters else")
+                # print("enters else")
                 if lane == 0:
-                    print("actual right lane density = ", curr_lane_density)
+                    # print("actual right lane density = ", curr_lane_density)
                     lane = 1 
                     self.cursor = self.roadlen
                     curr_lane_density = 0
@@ -156,8 +157,7 @@ if __name__ == "__main__":
         envs.append(Environment().generate_road_env())
         num_enviroments -= 1
     for a_env in envs:
-        print(a_env)
-        # print(a_env,sep = ' \n ========================================== \n')
+        print(a_env, '\n\n ================================================== \n')
 
 
 '''
