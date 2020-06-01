@@ -11,29 +11,12 @@ import enum
 __author__ = "Haoran Su, Kejian Shi"
 __version__ = "1.0.1"
 
-'''
-We are more likely to have a speed that does not differ too much. Now I only use random speed within a range proportional to the density setting. 
-
-Calculate method: Assume we have evenly spacing: we use a simple test calculation 2.5 +(2.5/density) * 0.447 = base + 2.5 (scalar / density in range 0.1 to 0.9) * 0.447 because conversion from mph to mps is 0.447 
-
-'''
 
 
-'''
-To do: 
-Density 肯定是长度算，因为固定2车道，宽是固定的，则
 
-两边的density 分开看就行！！
-'{} {}'. format(self.first, self. last) 
+#'{} {}'. format(self.first, self. last) 
 
-'''
-class Timestamp: 
-    '''
-    10 - 30 seconds per instruction, but we need acclelration
-    '''
-    pass 
-    def get_time(self):
-        pass 
+
 
 class SmallV():
     def __init__(self):
@@ -69,10 +52,6 @@ def cal_spacing_and_density(env_density, curr_density, roadlen, a_vehicle):
     '''get a safe spacing that ensures a "1.5 second rule" given nature of NYC 
     '''
     safe_spacing = a_vehicle.speed * 1.5 - 0.5 * (a_vehicle.max_acceler * 3) * 1.5^2  # braking decleration is about 3-4 times than acceleration
-
-    '''
-    todo: 见于堵的情况下倾向于squeeze， 而不dense更多选择会更分散， 则加上一个density 的影响因子. density 和 spacing 成反比则
-    '''
     spacing = safe_spacing + random.randrange(-0.2,2.0) 
 
     if spacing < 1:

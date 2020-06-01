@@ -1,0 +1,9 @@
+'''
+We are more likely to have a speed that does not differ too much. Now I only use random speed within a range proportional to the density setting. 
+
+Calculate method: Assume we have evenly spacing: we use a simple test calculation 2.5 +(2.5/density) * 0.447 = base + 2.5 (scalar / density in range 0.1 to 0.9) * 0.447 because conversion from mph to mps is 0.447 
+
+'''
+
+
+Todo: 见于堵的情况下倾向于squeeze， 而不dense更多选择会更分散， 则加上一个density 的影响因子. density 和 spacing 成反比则
