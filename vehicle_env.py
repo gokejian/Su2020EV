@@ -54,7 +54,7 @@ def cal_spacing_and_density(curr_density, roadlen, a_vehicle):
     return spacing , new_density 
 
 class Environment:  
-    def __init__(self, roadlen = 200, roadwid = 10, density = random.randrange(0.1,0.9)):
+    def __init__(self, density = random.randrange(0.1,0.9), roadlen = 200, roadwid = 10):
         self.classes = (SmallV,MediumV,LargeV)
         self.num_smallV = 0
         self.num_mediumV = 0 
@@ -95,6 +95,11 @@ class Environment:
         # [int:vehicle_index, int:type, int: lane, tuple:center_position, tuple<tuple>: physical_range_at_the_environment (), int:speed] 
 
         # ((self.cursor - 5.74) > 0 ) # here we take a maximum small car with minimum spacing of 1m as a threshold 
+        if len(sys.argv == 3):
+            ''' designated density 
+            '''
+            self.density = sys.argv[2]
+
         HALF_LANE_WID = self.roadwid/4 
         index = 1 
         lane = 0 # 0 or 1 to represent two lanes 
@@ -126,12 +131,19 @@ class Environment:
                     self.cursor = self.roadlen
                     curr_lane_density = 0
                     continue
+        
         return self.env_status  
 
     def __repr__(self):
-        print("Env status: [{}]") 
-        
-
+        print("Env status: [Small: {}, Medium: {}, Large: {}]".format(self.num_smallV,self.num_mediumV,self.num_largeV))
+        print(" ------------------------------- \n\n", self.env_status, sep = '---') 
+    
 
 if __name__ == "__main__":
-    pass
+    num_enviroments = sys.argv[1]
+    envs = []
+    while num_enviroments:
+        envs.append(Environment().generate_road_env())
+        num_enviroments -= 1
+    for a_env in envs:
+        print(a_env,sep = ' \n ========================================== \n')
