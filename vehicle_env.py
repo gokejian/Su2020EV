@@ -99,7 +99,7 @@ class Environment:
         if len(sys.argv) == 3:
             ''' designated density 
             '''
-            self.density = sys.argv[2]
+            self.density = float(sys.argv[2])
 
         HALF_LANE_WID = self.roadwid/4 
         index = 1 
@@ -142,10 +142,12 @@ class Environment:
         
         return self.env_status  
 
+    def __str__(self):
+        print("str called!!")
+        # print("Env status: [Small: {}, Medium: {}, Large: {}]".format(self.num_smallV,self.num_mediumV,self.num_largeV))
+        # print(" ------------------------------- \n\n", self.env_status, sep = '---') 
     def __repr__(self):
-        print("Env status: [Small: {}, Medium: {}, Large: {}]".format(self.num_smallV,self.num_mediumV,self.num_largeV))
-        print(" ------------------------------- \n\n", self.env_status, sep = '---') 
-    
+        return self.__str__()
 
 if __name__ == "__main__":
     num_enviroments = int(sys.argv[1])
@@ -154,4 +156,11 @@ if __name__ == "__main__":
         envs.append(Environment().generate_road_env())
         num_enviroments -= 1
     for a_env in envs:
-        print(a_env,sep = ' \n ========================================== \n')
+        print(a_env)
+        # print(a_env,sep = ' \n ========================================== \n')
+
+
+'''
+# [int:vehicle_index, int:type, int: lane, tuple:center_position, tuple<tuple>: physical_range_at_the_environment (), int:speed] 
+
+'''
