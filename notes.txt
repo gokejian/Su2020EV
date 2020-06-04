@@ -21,4 +21,6 @@ June.4th Todo:
 
 
 June.4th Discuss:
-    用新的架构，把车的状态输进去就ok
+    
+
+    
