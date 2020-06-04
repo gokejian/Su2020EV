@@ -11,3 +11,14 @@ Todo:
     1.见于堵的情况下倾向于squeeze， 而不dense更多选择会更分散， 则加上一个density 的影响因子. density 和 spacing 成反比则
     2.first car get spacing 问题
     3.code about cars' central position (attributes) not efficient 
+
+
+June.4th Todo:
+    车的速度和加速度不用放在initial condition 里面
+    初速度一直， 然后每辆车的加速度 是根据 他和 _前车_  的距离和速度差决定的
+
+    参考 car following model 
+
+
+June.4th Discuss:
+    用新的架构，把车的状态输进去就ok
