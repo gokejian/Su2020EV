@@ -5,15 +5,24 @@
     Class IDM() is a static class, model for 1-lane driver following behavior.  Metric: SI  
 '''
 import sys 
+import vehicle_env
 import math 
 
 __author__ = "Haoran Su, Kejian Shi"
 __version__ = "1.0.1"
 
+class Vehicle:
+    def __init__(self, acceler = None, speed = None, lane = None, gap = None):
+        self.acceler, self.speed, self.lane, self.gap = 4, 10, 0, 3
 
-
+    def get_desired_velocity(self):
+        pass
+    def get_safetime_headway(self):
+        pass
+        
 TIME_ELAPSE = 1 
 ROAD_LEN = 200 
+a_vehicle = Vehicle()
 
 class IDM(object):
     
