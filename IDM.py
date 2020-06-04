@@ -14,6 +14,7 @@ __version__ = "1.0.1"
 class Vehicle:
     def __init__(self, acceler = None, speed = None, lane = None, gap = None):
         self.acceler, self.speed, self.lane, self.gap = 4, 10, 0, 3
+        self.front_vehicle = None
 
     def get_desired_velocity(self):
         pass
@@ -40,16 +41,15 @@ class IDM(object):
         '''
         cal desired gap
         '''
-
-        pv = a_vehicle.velocity
-        if a_vehicle.lead_a_vehicle:
-            lpv = a_vehicle.lead_a_vehicle.velocity
+        veloc = a_vehicle.velocity
+        if a_vehicle.front_vehicle:
+            front_veloc = a_vehicle.front_vehicle.velocity
         else:
-            lpv = pv
-        c = ((a_vehicle.get_safetime_headway() * pv) +
-             ((pv * (pv - lpv)) / (2 * math.sqrt(
+            front_veloc = veloc
+        distance = ((a_vehicle.get_safetime_headway() * veloc) +
+             ((veloc * (veloc - front_veloc)) / (2 * math.sqrt(
                  a_vehicle.max_acceler * a_vehicle.max_deceleration))))
-        res= float(a_vehicle.minimum_distance + max(0, c))
+        res= float(a_vehicle.minimum_distance + max(0, distance))
         return res
 
     
@@ -64,21 +64,21 @@ class IDM(object):
 
     def cal_position(a_vehicle):
         if IDM.cal_raw_velocity(a_vehicle) < 0:
-            new_position = (a_vehicle.position -
+            pos_new = (a_vehicle.position -
                             (0.5 * (math.pow(a_vehicle.velocity, 2) /
                                     IDM.cal_acceler(a_vehicle))))
         else:
-            new_position = (a_vehicle.position +
+            pos_new = (a_vehicle.position +
                             (a_vehicle.velocity * TIME_ELAPSE) +
                             (0.5 * IDM.cal_acceler(a_vehicle) *
                              math.pow(TIME_ELAPSE, 2)))
-        return float(new_position)
+        return float(pos_new)
 
     def cal_gap(a_vehicle):
-        if a_vehicle.lead_a_vehicle:
-            return float(a_vehicle.lead_a_vehicle.position -
+        if a_vehicle.front_vehicle:
+            return float(a_vehicle.front_vehicle.position -
                          IDM.cal_position(a_vehicle) -
-                         a_vehicle.lead_a_vehicle.length)
+                         a_vehicle.front_vehicle.length)
         else:
             return float(ROAD_LEN + 100)
 
