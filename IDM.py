@@ -31,7 +31,7 @@ class IDM(object):
     
     def cal_acceler(a_vehicle):
         """
-        dv(t)/dt = [1 - (v(t)/v0)^4  - (s*(t)/s(t))^2]
+        dv(t)/dt = a[1 - (v(t)/v0)^4  - (s*(t)/s(t))^2]
         """
         acceler = math.pow(
             (a_vehicle.velocity / a_vehicle.get_desired_velocity()), 4)
@@ -40,9 +40,7 @@ class IDM(object):
 
     
     def cal_safe_headway(a_vehicle):  
-        '''
-        cal desired gap
-        '''
+      
         veloc = a_vehicle.velocity
         if a_vehicle.front_vehicle:
             front_veloc = a_vehicle.front_vehicle.velocity

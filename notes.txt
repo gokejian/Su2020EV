@@ -23,4 +23,122 @@ June.4th Todo:
 June.4th Discuss:
     
 
+June.5th with Haoran
+# 1. Class Vehicle: small car/ medium car/ large car
+
+CONST: 
+	MIN_SAFE_DISTANCE = 2m 
+  CAR_LEN_SMALL, .... 
+  MAX_ACCE, and MAX_DECC 
+  density and number of vehicles should be fixed. 
+
+  
+  free_flow_speed = desired 
+  safe_time_headway = T 
+  Jam distance s0 = min safe gap = 2 
+  s1 好像没出现
+  rough是density 
+
+  
+
+self.__init__(self, x, y, length = [4.5, 5.5, 6.5], v = background_traffic_speed, acceleration = 0, desired_acceleration = [3,2,1]) // 
+
+car.x - position of the vehicle front
+car.length - length of the vehicle
+car.y - vehicle lane position(binary:0/1)
+car.v - velocity of the car
+car.acceleration - acceleration of the vehicle
+# car.desired_acceleration - the most comfortable deceleration (value should be negative)
+
+# TODO: 1. initialize vehicle of any class; 2. get physical range: [car.x, car.x - length]
+
+# 2. Initialize Env
+
+background_traffic_speed = 4m/s
+, L = 80(200), ratio = 1: 1: 1 [np.random.choice(0,1,2)], num_vehicles
+np.random
+
+num_vehicle_left = num_vehicle/2
+num_vehicle_right =  num_vehicle - num_vehicle_left
+
+# For the left lane:
+meter_counter = 0
+unit_length = L/num_vehicle_left 
+veh_list_left = []
+
+for i in range(num_left - 1):
+	veh = np.random.choice(small( {x} = 0, y = 0, length = 4.5, v = background_traffic_speed ), medium(...),large(...))
+
+  front_pos = np.random.uniform(meter_counter + veh.length, meter_counter + unit_length)
+  // 	x is head. the lower bound of uniform 
+  veh.x  = front_pos
+  
+  meter_counter += unit_length
+  // meter_counter for section id 
+  veh_list_left.append(veh)
+
+# For the right lane:
+  
+state = [veh_list_left, veh_list_right]
+
+state = [[x_0, y_0, length_0, v_0, acceleration_0= 0, desired_acceleration_0]
+					[x_1, y_1, length_1, v_1, acceleration_1= 0, desired_acceleration_1]
+          
+          (n-1)
+          ] // acceleration is 0 when defined.
+# t = 0, initialization result excluding acceleration
+// now we have all uniform speed , x, max_accleration.
+// note: those desired_... should be attributes. 
+// IDM: calculate at the deacceleration at that time 
+
+# 3. Calcualte acceleration at t=0 for each vehicle according to IDM:
+IDM is for every vehicle defined in the environment:
+ 				"""
+        dv(t)/dt = [1 - (v(t)/v0)^4  - (s*(t)/s(t))^2]
+        """
+        
+list_veh_left.sort(state[0]) 
+list_veh_right.sort(state[0])
+
+  
+    def cal_acceler(a_vehicle):
+        """
+        dv(t)/dt = a[1 - (v(t)/v0)^4  - (s*(t)/s(t))^2]
+        """
+        acceler = math.pow(
+            (a_vehicle.velocity / a_vehicle.get_desired_velocity()), 4)
+        deceleration = math.pow(IDM.cal_safe_headway(a_vehicle) / a_vehicle.gap, 2)
+        return float(a_vehicle.max_acceler * (1 - acceler - deceleration))
+
+    def cal_safe_headway(a_vehicle):  
+      
+        veloc = a_vehicle.velocity
+        if a_vehicle.front_vehicle:
+            front_veloc = a_vehicle.front_vehicle.velocity
+        else:
+            front_veloc = veloc
+        distance = ((a_vehicle.get_safetime_headway() * veloc) +
+             ((veloc * (veloc - front_veloc)) / (2 * math.sqrt(
+                 a_vehicle.max_acceler * a_vehicle.max_deceleration))))
+        res= float(a_vehicle.minimum_distance + max(0, distance))
+        return res
+		
+
+
+// note: leading vehicle could change resulting from pulling behavior. 
+
+v0 - free flow speed, 8m/s 
+
+
+for veh in state:
+	veh.a = cal_acceleration(veh)
+
+// 我们不考虑lead vehicle acceleration but only speed 
+
+// 	下一个task:
+
+	1. 研究random分布车的问题
+  2. output with different composition (sys.args)
+
+
     
