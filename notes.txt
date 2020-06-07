@@ -27,7 +27,7 @@ June.5th with Haoran
 # 1. Class Vehicle: small car/ medium car/ large car
 
 CONST: 
-	MIN_SAFE_DISTANCE = 2m 
+  MIN_SAFE_DISTANCE = 2m 
   CAR_LEN_SMALL, .... 
   MAX_ACCE, and MAX_DECC 
   density and number of vehicles should be fixed. 
@@ -55,7 +55,7 @@ car.acceleration - acceleration of the vehicle
 # 2. Initialize Env
 
 background_traffic_speed = 4m/s
-, L = 80(200), ratio = 1: 1: 1 [np.random.choice(0,1,2)], num_vehicles
+, L = 200, ratio = 1: 1: 1 [np.random.choice(0,1,2)], num_vehicles
 np.random
 
 num_vehicle_left = num_vehicle/2
@@ -66,7 +66,7 @@ meter_counter = 0
 unit_length = L/num_vehicle_left 
 veh_list_left = []
 
-for i in range(num_left - 1):
+for i in range(num_left):
 	veh = np.random.choice(small( {x} = 0, y = 0, length = 4.5, v = background_traffic_speed ), medium(...),large(...))
 
   front_pos = np.random.uniform(meter_counter + veh.length, meter_counter + unit_length)
@@ -137,7 +137,7 @@ for veh in state:
 
 // 	下一个task:
 
-	1. 研究random分布车的问题
+  1. 研究random分布车的问题
   2. output with different composition (sys.args)
 
 
