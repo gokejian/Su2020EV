@@ -2,8 +2,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as Functional
 
-# This is a pointNet structure aim to yield policy for DQJL establishment
+
 def get_and_init_FC_layer(din, dout):
+    # Dimension of Input is
     li = nn.Linear(din, dout)
     #init weights/bias
     nn.init.xavier_uniform_(li.weight.data, gain=nn.init.calculate_gain('relu'))
