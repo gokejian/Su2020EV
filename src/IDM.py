@@ -12,26 +12,15 @@ __author__ = "Haoran Su, Kejian Shi"
 __version__ = "1.0.1"
 
 
-TIME_ELAPSE = 1 
-ROAD_LEN = 200 
-a_vehicle = Vehicle()
 
-class Vehicle:
-    def __init__(self, acceler = None, speed = None, lane = None, gap = None):
-        self.acceler, self.speed, self.lane, self.gap = 4, 10, 0, 3
-        self.front_vehicle = None
-
-    def get_desired_velocity(self):
-        pass
-    def get_safetime_headway(self):
-        pass
-        
 
 class IDM(object):
     
     def cal_acceler(a_vehicle):
         """
         dv(t)/dt = a[1 - (v(t)/v0)^4  - (s*(t)/s(t))^2]
+
+        这里acceler 是 前半部分free_flow_behavior, 为了加速调整的一个token, which is -a(v(t)/v0)^4  
         """
         acceler = math.pow(
             (a_vehicle.velocity / a_vehicle.get_desired_velocity()), 4)
@@ -42,7 +31,7 @@ class IDM(object):
     def cal_safe_headway(a_vehicle):  
       
         veloc = a_vehicle.velocity
-        if a_vehicle.front_vehicle:
+        if a_vehicle.front_vehicle: ''' if front_ve is not None '''
             front_veloc = a_vehicle.front_vehicle.velocity
         else:
             front_veloc = veloc

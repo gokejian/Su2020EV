@@ -40,7 +40,7 @@ CONST:
   rough是density 
 
 
-self.__init__(self, x, y, length = [4.5, 5.5, 6.5], v = background_traffic_speed, acceleration = 0, desired_acceleration = [3,2,1]) // 
+self.__init__(self, x, y, length = [4.5, 5.5, 6.5], v = background_traffic_speed, acceleration = 0, desired_acceleration = [3,2,1]) // or max_deceleration 
 
 car.x - position of the vehicle front
 car.length - length of the vehicle
@@ -48,8 +48,18 @@ car.y - vehicle lane position(binary:0/1)
 car.v - velocity of the car
 car.acceleration - acceleration of the vehicle
 # car.desired_acceleration - the most comfortable deceleration (value should be negative)
+'''
+NO, make acceleration positive (take absolute value) 
+'''
+
 
 # TODO: 1. initialize vehicle of any class; 2. get physical range: [car.x, car.x - length]
+
+'''
+add 
+field: physical range to Vehicle class 
+'''
+
 
 # 2. Initialize Env
 
@@ -62,7 +72,7 @@ num_vehicle_right =  num_vehicle - num_vehicle_left
 
 # For the left lane:
 meter_counter = 0
-unit_length = L/num_vehicle_left 
+unit_length = L/num_vehicle_left "unit length"
 veh_list_left = []
 
 for i in range(num_left):
@@ -96,7 +106,7 @@ IDM is for every vehicle defined in the environment:
         dv(t)/dt = [1 - (v(t)/v0)^4  - (s*(t)/s(t))^2]
         """
         
-list_veh_left.sort(state[0]) 
+list_veh_left.sort(state[0]) ''' sort based on ID? ''' 
 list_veh_right.sort(state[0])
 
   
@@ -132,12 +142,25 @@ v0 - free flow speed, 8m/s
 for veh in state:
 	veh.a = cal_acceleration(veh)
 
-// 我们不考虑lead vehicle acceleration but only speed 
+// 我们不考虑lead vehicle acceleration but only speed
 
+'''
+that's right 
+the determination of acceleration/deceleration of car i only depends on the velocity and 
+velocity different + desired gap 
+'''
 // 	下一个task:
-
   1. 研究random分布车的问题
   2. output with different composition (sys.args)
 
 Paper: 
     1. 对Behavior of the IDM 做一些解释
+
+
+汇报：
+    1. initial speed cannot be the same 
+    2. the deacceleration should be a positive number, adjusted by the formula 
+        also lots of cases of no negativity max(0,res)
+    3. the free flow speed is adopted from 2018 NYC mobility report 
+    4. we don't care about the dynamic behavior right?? 
+    5. lead_vehicle could change, do we reflect this in the OOP?  
