@@ -192,6 +192,7 @@ class PointPairNet(nn.Module):
         Y = self.F.forward(P)
         return Y
 
+
 class BoostedPointPairNet(PointPairNet):
 
     def __init__(self, d, dims, FC_dims, max_pool=True):
