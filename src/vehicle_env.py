@@ -188,10 +188,7 @@ class Environment:
                 # [head, rear]
 
                 a_vehicle.set_attributes(lead_vehicle,lane,position)
-            
-
                 self.env_status.append([lane, position, a_vehicle.acceleartion, a_vehicle.velocity, IDM.calc_desired_acceler(a_vehicle)])
-
 
                 if a_vehicle.type == 0:
                     self.num_smallV += 1 
@@ -199,9 +196,12 @@ class Environment:
                     self.num_mediumV += 1
                 elif a_vehicle.type == 2:
                     self.num_largeV += 1
+                    
                 curr_lane_density = potential_density
                 self.cursor = position - a_vehicle.length
                 index_curr_lane += 1
+                lead_vehicle = a_vehicle
+    
             else: 
                 # print("enters else")
                 if lane == 0: 
