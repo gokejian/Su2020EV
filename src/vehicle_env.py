@@ -4,6 +4,7 @@
 ''' This is the code for road environment setup with SI metric 
 '''
 import sys 
+import os
 import random 
 import numpy as np
 import math 
@@ -42,7 +43,7 @@ class Vehicle(object):
         self.lane = lane # binary: 0 for r, 1 for l 
         self.position = position # the head position 
         self.acceleartion = 0 # at t0
-        self.velocity = generate_num_margin_error(8,1)
+        self.velocity = generate_num_margin_error(8,0)
         # velocity is set d
         self.lead_vehicle = lead_vehicle
         if self.lead_vehicle is not None: 
@@ -103,11 +104,10 @@ class IDM():
         deceleration = math.pow(IDM.calc_desired_gap(vehicle) / vehicle.net_distance, 2)
         # note here vehicle.net_distance should be non-zero. Default set to 2
 
-        print ("current desired acceleration is <<<", 
-                        float(vehicle.max_acceler * (1 - acceleration - deceleration)), ">>>\n\n")
+        # print ("current desired acceleration is <<<", 
+                        # float(vehicle.max_acceler * (1 - acceleration - deceleration)), ">>>\n\n")
 
-        return float(vehicle.max_acceler * (1 - acceleration - deceleration))
-
+        return round(float(vehicle.max_acceler * (1 - acceleration - deceleration)),2)
 
 
     @staticmethod
@@ -131,9 +131,9 @@ def generate_num_margin_error(num, error_range):
 def cal_spacing_and_density(curr_density, roadlen, a_vehicle):
     '''get a safe spacing that ensures a "1.5 second rule" given nature of NYC 
     '''
-    safe_spacing = Constant.MIN_SAFETY_GAP + 3  # braking decleration is about 3-4 times than acceleration
+    safe_spacing = Constant.MIN_SAFETY_GAP + 1  # braking decleration is about 3-4 times than acceleration
     spacing = safe_spacing + round(random.uniform (0,2.0),1) 
-    print("The car length is: <<" , a_vehicle.length, ">>\n")
+    # print("The car length is: <<" , a_vehicle.length, ">>\n")
     new_density = curr_density + (spacing + a_vehicle.length) / roadlen
     return spacing , new_density 
 
@@ -171,7 +171,7 @@ class Environment:
     def is_valid(self,curr_density,curr_lane):
         bound_check = (self.cursor > 6)
         if curr_lane == 1:
-            bound_check = self.cursor > 194
+            bound_check = self.cursor < 194
         return (curr_density < self.density) and bound_check # otherwise cannot fit any car with 4m min len and 2m min gap
     
     def generate_road_env(self):  
@@ -198,20 +198,22 @@ class Environment:
             #(env_density, curr_density, roadlen, a_vehicle):
             bound_check = self.cursor > 6 
             if lane == 1: 
-                bound_check = self.cursor > 194
+                bound_check = self.cursor < 194
             if (potential_density < self.density) and bound_check:
                 # print("enters if (potential_density < self.density) and (self.cursor > 5): ")
-                position = round(self.cursor - spacing,2)  # lane is 0 or 1 
                 sign_adjust = -1 # if on left lane, then head_val < rear_val. 
                 if lane == 1: sign_adjust *= -1
+
+                position = round(self.cursor + (sign_adjust * spacing),2)  # lane is 0 or 1 
+        
                 physical_range = [position, position + (sign_adjust * a_vehicle.length)]
                 # [head, rear]
 
                # print("AT LINE 196, the lead_vehicle updated?: ", lead_vehicle)
                
                 a_vehicle.set_attributes(lead_vehicle,lane,position)
-                self.env_status.append([lane, position, a_vehicle.velocity,
-                                        a_vehicle.acceleartion, a_vehicle.desired_acceleration])
+                self.env_status.append([position,lane,a_vehicle.velocity,
+                                        a_vehicle.length, a_vehicle.comfor_decel])
 
                 #print(self.env_status, '\n\n\n')
                 if a_vehicle.type == 0:
@@ -267,7 +269,13 @@ if __name__ == "__main__":
         envs.append(Environment().generate_road_env())
         num_enviroments -= 1
     for a_env in envs:
-        print(a_env, '\n\n ================================================== \n')
+        # print(a_env, '\n\n ================================================== \n')
+        np_env = np.array(a_env)
+        print(os.curdir)
+        # sys.stdout = open('output/env_{}.txt'.format(str(num_enviroments - int(sys.argv[1]))),
+        #                 'w')
+        # print(np_env)
+
 
 '''
 # [int:vehicle_index, int:type, int: lane, tuple:center_position, tuple<tuple>: physical_range_at_the_environment (), int:speed] 
