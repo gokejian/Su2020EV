@@ -29,6 +29,16 @@ class IDM(DriverModel):
 staticmethod: can do IDM.calc_desired_gap(vehicle)
 
 '''
+
+    @staticmethod
+    def calc_gap(vehicle):  '''net distance'''
+        if vehicle.lead_vehicle:
+            return float(vehicle.lead_vehicle.position -
+                         IDM.calc_position(vehicle) -
+                         vehicle.lead_vehicle.length)
+        else:
+            return float(Consts.ROAD_LENGTH + 100)
+
     @staticmethod
     def calc_acceleration(vehicle):
         """
@@ -42,7 +52,7 @@ staticmethod: can do IDM.calc_desired_gap(vehicle)
     @staticmethod
     def calc_desired_gap(vehicle): "S_star"
         pv = vehicle.velocity
-        if vehicle.lead_vehicle: '''if lead_vehicle is not none'''
+        if vehicle.lead_vehicle: 
             lpv = vehicle.lead_vehicle.velocity
         else:
             lpv = pv "else if lead_vehicle is None, then equal the two"
@@ -77,15 +87,7 @@ staticmethod: can do IDM.calc_desired_gap(vehicle)
                              math.pow(Consts.TIME_STEP, 2)))
         return float(new_position)
 
-    @staticmethod
-    def calc_gap(vehicle):  '''net distance'''
-        if vehicle.lead_vehicle:
-            return float(vehicle.lead_vehicle.position -
-                         IDM.calc_position(vehicle) -
-                         vehicle.lead_vehicle.length)
-        else:
-            return float(Consts.ROAD_LENGTH + 100)
-
+   
 
 class TruckPlatoon(DriverModel):
     @staticmethod

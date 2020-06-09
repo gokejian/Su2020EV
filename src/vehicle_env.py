@@ -14,11 +14,12 @@ __author__ = "Haoran Su, Kejian Shi"
 __version__ = "1.0.1"
 
 class Vehicle(object):
-    def __init__(self):
+    def __init__(self, length = None):
         # static parameters, for the Intelligent Driver Model 
         self.desired_velocity = Constant.DESIRED_VELOCITY # free_flow_speed 
         self.min_safety_gap = Constant.MIN_SAFETY_GAP # s0 
         self.safe_time_headway = Constant.SAFE_TIME_HEADWAY # T 
+        self.length = length
     
         # dynamic attributes 
         self.lead_vehicle = None
@@ -26,14 +27,30 @@ class Vehicle(object):
         self.net_distance = 0  # actual gap, calculated by x_i-1 - l_i-1 - x_i, where i-1 is the lead vehicle
         self.lane = 0 # binary: 0 for r, 1 for l 
         self.position = 0 # the head position 
-        self.acceleartion = 0 # change with t, updated by the IDM model.  
+        self.acceleartion = 0 # at t0
+        self.desired_acceleration = 0 # updated by the IDM model.  
 
     def cal_safetime_headway(self):
-        pass
+        ''' ?? What about safetime headway 
+        '''
+        return 1.5 
 
     def get_desired_velocity(self): # should be without speed limit 
-        pass  
+        return self.desired_velocity
 
+    def set_attributes(self, lead_vehicle,lane, position):
+        self.lane = lane # binary: 0 for r, 1 for l 
+        self.position = position # the head position 
+        self.acceleartion = 0 # at t0
+        self.velocity = generate_num_margin_error(8,1)
+        # velocity is set d
+        if lead_vehicle is not None: 
+            self.net_distance = IDM.calc_net_distance(self)
+            self.desired_acceleration = IDM.calc_desired_acceler(self) # updated by the IDM model.
+            return True 
+        else:
+            print("!!!!!!!! FIRST VEHICLE !!!!!!!!!")
+        
 class SmallV(Vehicle):
     def __init__(self):
         super().__init__()
@@ -59,7 +76,6 @@ class LargeV(Vehicle):
         self.comfor_decel = Constant.COMROT_DECEL_L # b
 
 class IDM():
-
     @staticmethod
     def calc_net_distance(vehicle):  
         '''net distance
@@ -118,7 +134,7 @@ class Environment:
         self.cursor = roadlen # start position to fill vehicles 
         self.env_status = [] # keep track of all vehicle information as array of [int:vehicle_index, int:type, int: lane, tuple:center_position, tuple<tuple>: physical_range_at_the_environment, int:speed] 
         
-    def get_rand_vehicle(self, back_traffic_speed = generate_num_margin_error(8,1)):
+    def get_rand_vehicle(self):
         '''
         # generate a vehicle with chance 1:3:1 being smallV,mediumV,largeV, respectively (reflect NYC traffic)
         '''
@@ -171,24 +187,10 @@ class Environment:
                 physical_range = [position, position + (sign_adjust * a_vehicle.length)]
                 # [head, rear]
 
-                a_vehicle.lead_vehicle = lead_vehicle
-                
+                a_vehicle.set_attributes(lead_vehicle,lane,position)
             
-                '''
-                 self.lead_vehicle 
-                 self.velocity = 0 
-                 self.net_distance = 0 
-                 self.lane = 0 
-                 self.position = 0 
-                 self.acceleartion = 
-                '''
-               
-
 
                 self.env_status.append([lane, position, a_vehicle.acceleartion, a_vehicle.velocity, IDM.calc_desired_acceler(a_vehicle)])
-
-
-
 
 
                 if a_vehicle.type == 0:

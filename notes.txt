@@ -170,12 +170,13 @@ Paper:
 
 和师兄汇报： 
     0. double check 一下 SML有不同的most_comfort_del 对吧
-    1. desired_velocity (free_flow_speed = 8 +- 1 )
+    1. (velocity = 8 +- 1 )
             ++ the idea of background_traffic_speed. same as velocity? 
     2. 车头位置
     3. deacceleration 的 符号问题又搞不明白了
     4. data hiding 没有很规范.不重要
     6. 当前的acceleration 都是零？ 
     7. 处理第一辆车的时候，那就加速度为0好了
+
 
 5. b + noise 是怎么回事
