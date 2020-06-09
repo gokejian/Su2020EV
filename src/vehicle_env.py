@@ -24,7 +24,7 @@ class Vehicle(object):
         # dynamic attributes 
         self.lead_vehicle = None
         self.velocity = 0 # v, current velocity 
-        self.net_distance = 0  # actual gap, calculated by x_i-1 - l_i-1 - x_i, where i-1 is the lead vehicle
+        self.net_distance = 2  # default non-zero actual gap, calculated by x_i-1 - l_i-1 - x_i, where i-1 is the lead vehicle
         self.lane = 0 # binary: 0 for r, 1 for l 
         self.position = 0 # the head position 
         self.acceleartion = 0 # at t0
@@ -44,12 +44,14 @@ class Vehicle(object):
         self.acceleartion = 0 # at t0
         self.velocity = generate_num_margin_error(8,1)
         # velocity is set d
-        if lead_vehicle is not None: 
+        self.lead_vehicle = lead_vehicle
+        if self.lead_vehicle is not None: 
+            #print("!!! ENTERS set_attribute.(lead_vehicle is not None)!!!!!!\n\n")
             self.net_distance = IDM.calc_net_distance(self)
             self.desired_acceleration = IDM.calc_desired_acceler(self) # updated by the IDM model.
             return True 
         else:
-            print("!!!!!!!! FIRST VEHICLE !!!!!!!!!")
+            #print("!!! FIRST VEHICLE !!!!!!\n\n")
         
 class SmallV(Vehicle):
     def __init__(self):
@@ -80,11 +82,15 @@ class IDM():
     def calc_net_distance(vehicle):  
         '''net distance
         '''
-        if vehicle.lead_vehicle:
+       # print("!!! ENTERS IDM.calc_net_distance!!!!!!\n\n")
+       # print("======what happend here?: vehicle: \n" , vehicle ,"\n vehicle.lead_vehicle: \n", vehicle.lead_vehicle, "\n\n")
+        if vehicle.lead_vehicle is not None:
+           # print(" ENTERS lead_vehicle not none\n\n")
             return float(vehicle.lead_vehicle.position - 
                          vehicle.lead_vehicle.length - 
                          vehicle.position)
         else:
+          #  print ("ENTERS lead_vehicle is NONE!!")
             return 0 
 
     @staticmethod
@@ -94,8 +100,9 @@ class IDM():
         """
         acceleration = math.pow(
             (vehicle.velocity / vehicle.get_desired_velocity()), 4)
-        deceleration = math.pow(IDM.calc_desired_gap(vehicle) / vehicle.gap, 2)
-        return float(vehicle.max_acceleration * (1 - acceleration - deceleration))
+        deceleration = math.pow(IDM.calc_desired_gap(vehicle) / vehicle.net_distance, 2)
+        # note here vehicle.net_distance should be non-zero. Default set to 2
+        return float(vehicle.max_acceler * (1 - acceleration - deceleration))
 
     @staticmethod
     def calc_desired_gap(vehicle):
@@ -126,6 +133,8 @@ def cal_spacing_and_density(curr_density, roadlen, a_vehicle):
 class Environment:  
     def __init__(self, density = round(random.uniform (0.1,0.9),1), roadlen = 200):
         self.classes = (SmallV,MediumV,LargeV)
+        self.num_left = 0
+        self.num_right = 0 
         self.num_smallV = 0
         self.num_mediumV = 0 
         self.num_largeV = 0
@@ -171,9 +180,13 @@ class Environment:
         curr_lane_density = 0
         lead_vehicle = None
         while self.is_valid(curr_lane_density,lane): 
-            # print("while loop is running")
+          #  print("=======while loop is running=======", index_curr_lane)
             # print("index is ", index )
+            
             a_vehicle = self.get_rand_vehicle()
+
+          #  print("lead_vehicle is: <<<<<" ,lead_vehicle ," >>>>>>>")
+
             spacing , potential_density = cal_spacing_and_density(curr_lane_density,self.roadlen,a_vehicle)
             #(env_density, curr_density, roadlen, a_vehicle):
             bound_check = self.cursor > 6 
@@ -187,9 +200,13 @@ class Environment:
                 physical_range = [position, position + (sign_adjust * a_vehicle.length)]
                 # [head, rear]
 
+               # print("AT LINE 196, the lead_vehicle updated?: ", lead_vehicle)
+               
                 a_vehicle.set_attributes(lead_vehicle,lane,position)
-                self.env_status.append([lane, position, a_vehicle.acceleartion, a_vehicle.velocity, IDM.calc_desired_acceler(a_vehicle)])
+                self.env_status.append([lane, position, a_vehicle.velocity,
+                                        a_vehicle.acceleartion, a_vehicle.desired_acceleration])
 
+                #print(self.env_status, '\n\n\n')
                 if a_vehicle.type == 0:
                     self.num_smallV += 1 
                 elif a_vehicle.type == 1:     
@@ -198,9 +215,16 @@ class Environment:
                     self.num_largeV += 1
                     
                 curr_lane_density = potential_density
-                self.cursor = position - a_vehicle.length
+
+                if lane == 0:
+                    self.cursor = position - a_vehicle.length
+                else: 
+                    self.cursor = position + a_vehicle.length 
+
                 index_curr_lane += 1
+               
                 lead_vehicle = a_vehicle
+                #print("lead_vehicle is: <<<<<" ,lead_vehicle ," >>>>>>>")
     
             else: 
                 # print("enters else")
@@ -209,12 +233,14 @@ class Environment:
                     '''
                     # print("actual right lane density = ", curr_lane_density)
                     lane = 1 
+                    self.num_left = index_curr_lane + 1
                     index_curr_lane = 0 
                     self.cursor = 0
                     curr_lane_density = 0
                     lead_vehicle = None 
                     continue
                 else: 
+                    self.num_right = index_curr_lane + 1
                     return self.env_status # we can fully stop
         
         return self.env_status  
