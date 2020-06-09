@@ -51,7 +51,7 @@ class Vehicle(object):
             self.desired_acceleration = IDM.calc_desired_acceler(self) # updated by the IDM model.
             return True 
         else:
-            #print("!!! FIRST VEHICLE !!!!!!\n\n")
+            return False # meaning that this is the leading car in the lane
         
 class SmallV(Vehicle):
     def __init__(self):
@@ -102,7 +102,13 @@ class IDM():
             (vehicle.velocity / vehicle.get_desired_velocity()), 4)
         deceleration = math.pow(IDM.calc_desired_gap(vehicle) / vehicle.net_distance, 2)
         # note here vehicle.net_distance should be non-zero. Default set to 2
+
+        print ("current desired acceleration is <<<", 
+                        float(vehicle.max_acceler * (1 - acceleration - deceleration)), ">>>\n\n")
+
         return float(vehicle.max_acceler * (1 - acceleration - deceleration))
+
+
 
     @staticmethod
     def calc_desired_gap(vehicle):
@@ -125,8 +131,9 @@ def generate_num_margin_error(num, error_range):
 def cal_spacing_and_density(curr_density, roadlen, a_vehicle):
     '''get a safe spacing that ensures a "1.5 second rule" given nature of NYC 
     '''
-    safe_spacing = Constant.MIN_SAFETY_GAP # braking decleration is about 3-4 times than acceleration
+    safe_spacing = Constant.MIN_SAFETY_GAP + 3  # braking decleration is about 3-4 times than acceleration
     spacing = safe_spacing + round(random.uniform (0,2.0),1) 
+    print("The car length is: <<" , a_vehicle.length, ">>\n")
     new_density = curr_density + (spacing + a_vehicle.length) / roadlen
     return spacing , new_density 
 
