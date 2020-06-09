@@ -3,18 +3,15 @@
 
 ''' This is the code for road environment setup with SI metric 
 '''
-
 import sys 
 import random 
 import numpy as np
+import math 
 import Constant
 
  
 __author__ = "Haoran Su, Kejian Shi"
 __version__ = "1.0.1"
-
-
-
 
 class Vehicle(object):
     def __init__(self):
@@ -22,15 +19,20 @@ class Vehicle(object):
         self.desired_velocity = Constant.DESIRED_VELOCITY # free_flow_speed 
         self.min_safety_gap = Constant.MIN_SAFETY_GAP # s0 
         self.safe_time_headway = Constant.SAFE_TIME_HEADWAY # T 
-        self.comfor_decel = Constant.COMROT_DECEL # b 
     
         # dynamic attributes 
         self.lead_vehicle = None
         self.velocity = 0 # v, current velocity 
         self.net_distance = 0  # actual gap, calculated by x_i-1 - l_i-1 - x_i, where i-1 is the lead vehicle
-        self.lane = 0 # binary: 0 for l, 1 for r 
+        self.lane = 0 # binary: 0 for r, 1 for l 
         self.position = 0 # the head position 
         self.acceleartion = 0 # change with t, updated by the IDM model.  
+
+    def cal_safetime_headway(self):
+        pass
+
+    def get_desired_velocity(self): # should be without speed limit 
+        pass  
 
 class SmallV(Vehicle):
     def __init__(self):
@@ -38,6 +40,7 @@ class SmallV(Vehicle):
         self.type = 0
         self.length = round(random.uniform (4.00,4.74),2)
         self.max_acceler = 3
+        self.comfor_decel = Constant.COMROT_DECEL_S # b
       
 class MediumV(Vehicle):
     def __init__(self):
@@ -45,6 +48,7 @@ class MediumV(Vehicle):
         self.type = 1
         self.length = round(random.uniform (4.75,5.34),2)
         self.max_acceler = 3.5
+        self.comfor_decel = Constant.COMROT_DECEL_M # b
 
 class LargeV(Vehicle):
     def __init__(self):
@@ -52,20 +56,23 @@ class LargeV(Vehicle):
         self.type = 2
         self.length = round(random.uniform (5.45,6.45),2)
         self.max_acceler = 2
+        self.comfor_decel = Constant.COMROT_DECEL_L # b
 
-class IDM(DriverModel):
+class IDM():
 
     @staticmethod
-    def calc_gap(vehicle):  '''net distance'''
+    def calc_net_distance(vehicle):  
+        '''net distance
+        '''
         if vehicle.lead_vehicle:
-            return float(vehicle.lead_vehicle.position -
-                         IDM.calc_position(vehicle) -
-                         vehicle.lead_vehicle.length)
+            return float(vehicle.lead_vehicle.position - 
+                         vehicle.lead_vehicle.length - 
+                         vehicle.position)
         else:
-            return float(Consts.ROAD_LENGTH + 100)
+            return 0 
 
     @staticmethod
-    def calc_acceleration(vehicle):
+    def calc_desired_acceler(vehicle):
         """
         dv(t)/dt = a[1 - (v(t)/v0)^4  - (s*(t)/s(t))^2]
         """
@@ -75,23 +82,19 @@ class IDM(DriverModel):
         return float(vehicle.max_acceleration * (1 - acceleration - deceleration))
 
     @staticmethod
-    def calc_desired_gap(vehicle): "S_star"
+    def calc_desired_gap(vehicle):
+        # s*
         pv = vehicle.velocity
-        if vehicle.lead_vehicle: '''if lead_vehicle is not none'''
+        if vehicle.lead_vehicle:
             lpv = vehicle.lead_vehicle.velocity
         else:
-            lpv = pv "else if lead_vehicle is None, then equal the two"
-        c = ((vehicle.safe_time_headway * pv) +
+            lpv = pv # then the velocity difference is 0
+        gap = ((vehicle.safe_time_headway * pv) +
              ((pv * (pv - lpv)) / (2 * math.sqrt(
-                 vehicle.max_acceler * vehicle.comfor_decel)))) 
-                 '''change max_deceleration to comfor_decel
-                 '''
-        ret = float(vehicle.min_safety_gap + max(0, c)) '''avoid any negativity'''
-        return ret
-
-
-
-
+             vehicle.max_acceler * vehicle.comfor_decel)))) 
+        '''change max_deceleration to comfor_decel
+        '''
+        return float(vehicle.min_safety_gap + max(0, gap)) # no negative
 
 def generate_num_margin_error(num, error_range):
     return round(random.uniform (num - error_range , num + error_range),2)
@@ -115,7 +118,7 @@ class Environment:
         self.cursor = roadlen # start position to fill vehicles 
         self.env_status = [] # keep track of all vehicle information as array of [int:vehicle_index, int:type, int: lane, tuple:center_position, tuple<tuple>: physical_range_at_the_environment, int:speed] 
         
-    def get_rand_vehicle(self):
+    def get_rand_vehicle(self, back_traffic_speed = generate_num_margin_error(8,1)):
         '''
         # generate a vehicle with chance 1:3:1 being smallV,mediumV,largeV, respectively (reflect NYC traffic)
         '''
@@ -147,11 +150,10 @@ class Environment:
         if len(sys.argv) == 3:
             #d esignated density 
             self.density = float(sys.argv[2])
-        index = 1 
+        index_curr_lane = 0 
         lane = 0 # start with right lane
         curr_lane_density = 0
         lead_vehicle = None
-
         while self.is_valid(curr_lane_density,lane): 
             # print("while loop is running")
             # print("index is ", index )
@@ -164,12 +166,23 @@ class Environment:
             if (potential_density < self.density) and bound_check:
                 # print("enters if (potential_density < self.density) and (self.cursor > 5): ")
                 position = round(self.cursor - spacing,2)  # lane is 0 or 1 
-                sign_adjust = -1 # if on left lane, then head val < rear val. 
-                if lane == 1: sign_adjust *= (-1)
+                sign_adjust = -1 # if on left lane, then head_val < rear_val. 
+                if lane == 1: sign_adjust *= -1
                 physical_range = [position, position + (sign_adjust * a_vehicle.length)]
                 # [head, rear]
 
-
+                a_vehicle.lead_vehicle = lead_vehicle
+                
+            
+                '''
+                 self.lead_vehicle 
+                 self.velocity = 0 
+                 self.net_distance = 0 
+                 self.lane = 0 
+                 self.position = 0 
+                 self.acceleartion = 
+                '''
+               
 
 
                 self.env_status.append([lane, position, a_vehicle.acceleartion, a_vehicle.velocity, IDM.calc_desired_acceler(a_vehicle)])
@@ -186,7 +199,7 @@ class Environment:
                     self.num_largeV += 1
                 curr_lane_density = potential_density
                 self.cursor = position - a_vehicle.length
-                index += 1
+                index_curr_lane += 1
             else: 
                 # print("enters else")
                 if lane == 0: 
@@ -194,6 +207,7 @@ class Environment:
                     '''
                     # print("actual right lane density = ", curr_lane_density)
                     lane = 1 
+                    index_curr_lane = 0 
                     self.cursor = 0
                     curr_lane_density = 0
                     lead_vehicle = None 

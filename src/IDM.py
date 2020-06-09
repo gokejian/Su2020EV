@@ -12,8 +12,6 @@ __author__ = "Haoran Su, Kejian Shi"
 __version__ = "1.0.1"
 
 
-
-
 class IDM(object):
     
     def cal_acceler(a_vehicle):
@@ -27,9 +25,7 @@ class IDM(object):
         deceleration = math.pow(IDM.cal_safe_headway(a_vehicle) / a_vehicle.gap, 2)
         return float(a_vehicle.max_acceler * (1 - acceler - deceleration))
 
-    
     def cal_safe_headway(a_vehicle):  
-      
         veloc = a_vehicle.velocity
         if a_vehicle.front_vehicle: ''' if front_ve is not None '''
             front_veloc = a_vehicle.front_vehicle.velocity

@@ -92,7 +92,6 @@ state = [veh_list_left, veh_list_right]
 
 state = [[x_0, y_0, length_0, v_0, acceleration_0= 0, desired_acceleration_0]
 					[x_1, y_1, length_1, v_1, acceleration_1= 0, desired_acceleration_1]
-          
           (n-1)
           ] // acceleration is 0 when defined.
 # t = 0, initialization result excluding acceleration
@@ -164,3 +163,19 @@ Paper:
     3. the free flow speed is adopted from 2018 NYC mobility report 
     4. we don't care about the dynamic behavior right?? 
     5. lead_vehicle could change, do we reflect this in the OOP?  
+
+
+现行递减：速度和车间距的关系体现一下
+
+
+和师兄汇报： 
+    0. double check 一下 SML有不同的most_comfort_del 对吧
+    1. desired_velocity (free_flow_speed = 8 +- 1 )
+            ++ the idea of background_traffic_speed. same as velocity? 
+    2. 车头位置
+    3. deacceleration 的 符号问题又搞不明白了
+    4. data hiding 没有很规范.不重要
+    6. 当前的acceleration 都是零？ 
+    7. 处理第一辆车的时候，那就加速度为0好了
+
+5. b + noise 是怎么回事
