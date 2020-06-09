@@ -264,17 +264,20 @@ class Environment:
 if __name__ == "__main__":
     num_enviroments = int(sys.argv[1])
     envs = []
-
+    os.chdir("/Users/markshi/Documents/GitHub/research_projects/NYU/Su2020EV/outputs")
     while num_enviroments:
         envs.append(Environment().generate_road_env())
         num_enviroments -= 1
+    counter = 0
     for a_env in envs:
         # print(a_env, '\n\n ================================================== \n')
         np_env = np.array(a_env)
-        print(os.curdir)
-        # sys.stdout = open('output/env_{}.txt'.format(str(num_enviroments - int(sys.argv[1]))),
-        #                 'w')
-        # print(np_env)
+        # print(os.getcwd())
+
+        sys.stdout = open(os.getcwd() + "/env_{}.txt".format(counter),
+                        'w')
+        print(np_env)
+        counter += 1
 
 
 '''
