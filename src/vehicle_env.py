@@ -25,7 +25,7 @@ class Vehicle(object):
         # dynamic attributes 
         self.lead_vehicle = None
         self.velocity = 0 # v, current velocity 
-        self.net_distance = 2  # default non-zero actual gap, calculated by x_i-1 - l_i-1 - x_i, where i-1 is the lead vehicle
+        self.net_distance = 10  # default non-zero actual gap, calculated by , 
         self.lane = 0 # binary: 0 for r, 1 for l 
         self.position = 0 # the head position 
         self.acceleartion = 0 # at t0
@@ -34,12 +34,13 @@ class Vehicle(object):
     def cal_safetime_headway(self):
         ''' ?? What about safetime headway 
         '''
-        return 1.5 
+        return Constant.SAFE_TIME_HEADWAY 
 
     def get_desired_velocity(self): # should be without speed limit 
         return self.desired_velocity
 
     def set_attributes(self, lead_vehicle,lane, position):
+        # print("After entering set attributes, lead_vehicle is:{}",format(lead_vehicle)) 
         self.lane = lane # binary: 0 for r, 1 for l 
         self.position = position # the head position 
         self.acceleartion = 0 # at t0
@@ -52,6 +53,8 @@ class Vehicle(object):
             self.desired_acceleration = IDM.calc_desired_acceler(self) # updated by the IDM model.
             return True 
         else:
+            # print("HERE NO SETTING ACCELERATION!!!")]
+            print(self.lead_vehicle, "    ", self.net_distance, "    ", self.desired_acceleration, " \n" )
             return False # meaning that this is the leading car in the lane
         
 class SmallV(Vehicle):
@@ -81,18 +84,14 @@ class LargeV(Vehicle):
 class IDM():
     @staticmethod
     def calc_net_distance(vehicle):  
-        '''net distance
+        '''net distance x_i-1 - l_i-1 - x_i, where i-1 is the length of the lead vehicle 
         '''
        # print("!!! ENTERS IDM.calc_net_distance!!!!!!\n\n")
-       # print("======what happend here?: vehicle: \n" , vehicle ,"\n vehicle.lead_vehicle: \n", vehicle.lead_vehicle, "\n\n")
-        if vehicle.lead_vehicle is not None:
-           # print(" ENTERS lead_vehicle not none\n\n")
-            return float(vehicle.lead_vehicle.position - 
-                         vehicle.lead_vehicle.length - 
-                         vehicle.position)
-        else:
-          #  print ("ENTERS lead_vehicle is NONE!!")
-            return 0 
+       # print("======what happend here?: vehicle: \n" , vehicle ,"\n vehicle.lead_vehicle: \n", vehicle.lead_vehicle, "\n\n") 
+        return float(vehicle.lead_vehicle.position - 
+                        vehicle.lead_vehicle.length - 
+                        vehicle.position)
+    
 
     @staticmethod
     def calc_desired_acceler(vehicle):
@@ -109,14 +108,14 @@ class IDM():
 
         return round(float(vehicle.max_acceler * (1 - acceleration - deceleration)),2)
 
-
     @staticmethod
     def calc_desired_gap(vehicle):
         # s*
         pv = vehicle.velocity
-        if vehicle.lead_vehicle:
+        if vehicle.lead_vehicle is not None:
             lpv = vehicle.lead_vehicle.velocity
         else:
+            print("<<<<<<<In cal_desired_gap>>>>>>>" )
             lpv = pv # then the velocity difference is 0
         gap = ((vehicle.safe_time_headway * pv) +
              ((pv * (pv - lpv)) / (2 * math.sqrt(
@@ -131,7 +130,7 @@ def generate_num_margin_error(num, error_range):
 def cal_spacing_and_density(curr_density, roadlen, a_vehicle):
     '''get a safe spacing that ensures a "1.5 second rule" given nature of NYC 
     '''
-    safe_spacing = Constant.MIN_SAFETY_GAP + 1  # braking decleration is about 3-4 times than acceleration
+    safe_spacing = Constant.MIN_SAFETY_GAP + 1  
     spacing = safe_spacing + round(random.uniform (0,2.0),1) 
     # print("The car length is: <<" , a_vehicle.length, ">>\n")
     new_density = curr_density + (spacing + a_vehicle.length) / roadlen
@@ -213,7 +212,7 @@ class Environment:
                
                 a_vehicle.set_attributes(lead_vehicle,lane,position)
                 self.env_status.append([position,lane,a_vehicle.velocity,
-                                        a_vehicle.length, a_vehicle.comfor_decel])
+                                        a_vehicle.length, a_vehicle.comfor_decel, a_vehicle.desired_acceleration])
 
                 #print(self.env_status, '\n\n\n')
                 if a_vehicle.type == 0:
@@ -263,6 +262,8 @@ class Environment:
 
 if __name__ == "__main__":
     num_enviroments = int(sys.argv[1])
+
+    np.set_printoptions(suppress=True)
     envs = []
     os.chdir("/Users/markshi/Documents/GitHub/research_projects/NYU/Su2020EV/outputs")
     while num_enviroments:
@@ -274,9 +275,9 @@ if __name__ == "__main__":
         np_env = np.array(a_env)
         # print(os.getcwd())
 
-        sys.stdout = open(os.getcwd() + "/env_{}.txt".format(counter),
-                        'w')
-        print(np_env)
+        # sys.stdout = open(os.getcwd() + "/env_{}.txt".format(counter),
+        #                 'w')
+        # print(np_env)
         counter += 1
 
 
