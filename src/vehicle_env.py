@@ -25,7 +25,7 @@ class Vehicle(object):
         # dynamic attributes 
         self.lead_vehicle = None
         self.velocity = 0 # v, current velocity 
-        self.net_distance = 10  # default non-zero actual gap, calculated by , 
+        self.net_distance = 5  # default non-zero actual gap, calculated by , 
         self.lane = 0 # binary: 0 for r, 1 for l 
         self.position = 0 # the head position 
         self.acceleartion = 0 # at t0
@@ -38,6 +38,10 @@ class Vehicle(object):
 
     def get_desired_velocity(self): # should be without speed limit 
         return self.desired_velocity
+
+    def has_lead_vehicle(self):
+        return self.lead_vehicle is not None
+
 
     def set_attributes(self, lead_vehicle,lane, position):
         # print("After entering set attributes, lead_vehicle is:{}",format(lead_vehicle)) 
@@ -87,9 +91,15 @@ class IDM():
         '''
        # print("!!! ENTERS IDM.calc_net_distance!!!!!!\n\n")
        # print("======what happend here?: vehicle: \n" , vehicle ,"\n vehicle.lead_vehicle: \n", vehicle.lead_vehicle, "\n\n") 
-        return float(vehicle.lead_vehicle.position - 
+        
+        if(vehicle.lane == 1):
+            return round(float(vehicle.position - 
+                        vehicle.lead_vehicle.length -
+                        vehicle.lead_vehicle.position),2)
+        
+        return round(float(vehicle.lead_vehicle.position - 
                         vehicle.lead_vehicle.length - 
-                        vehicle.position)
+                        vehicle.position),2)
     
 
     @staticmethod
@@ -202,16 +212,31 @@ class Environment:
                 sign_adjust = -1 # if on left lane, then head_val < rear_val. 
                 if lane == 1: sign_adjust *= -1
 
+                ''' 
+                modify the position calculation technique 
+
+                '''
+
+
                 position = round(self.cursor + (sign_adjust * spacing),2)  # lane is 0 or 1 
-        
-                physical_range = [position, position + (sign_adjust * a_vehicle.length)]
+               
+
+              
                 # [head, rear]
 
                # print("AT LINE 196, the lead_vehicle updated?: ", lead_vehicle)
                
                 a_vehicle.set_attributes(lead_vehicle,lane,position)
+
+                print("====== NOW TESTING THE ARITHMETICS ====== \n The car has <{}> lead_vehicle  \n"
+                                    "The car has position <{}>,\n" 
+                                    "The spacing is <{}>,\n The net_distance is <{}>,\n it has length <{}>\
+                                        ".format(a_vehicle.has_lead_vehicle(),a_vehicle.position,spacing,
+                                                 a_vehicle.net_distance,a_vehicle.length))
+        
                 self.env_status.append([position,lane,a_vehicle.velocity,
                                         a_vehicle.length, a_vehicle.comfor_decel, a_vehicle.desired_acceleration])
+              
 
                 #print(self.env_status, '\n\n\n')
                 if a_vehicle.type == 0:
@@ -260,24 +285,20 @@ class Environment:
         return self.__str__()
 
 if __name__ == "__main__":
-    num_enviroments = int(sys.argv[1])
-
     np.set_printoptions(suppress=True)
     envs = []
+    num_enviroments = int(sys.argv[1])
+    store_num_env = num_enviroments 
+    
     os.chdir("/Users/markshi/Documents/GitHub/research_projects/NYU/Su2020EV/outputs")
     while num_enviroments:
-        envs.append(Environment().generate_road_env())
-        num_enviroments -= 1
-    counter = 0
-    for a_env in envs:
-        # print(a_env, '\n\n ================================================== \n')
+        a_env = Environment().generate_road_env()
         np_env = np.array(a_env)
-        # print(os.getcwd())
-
-        # sys.stdout = open(os.getcwd() + "/env_{}.txt".format(counter),
-        #                 'w')
+        indx = store_num_env - num_enviroments
+        # sys.stdout = open(os.getcwd() + "/env_{}.txt".format(indx),'w')
         # print(np_env)
-        counter += 1
+        envs.append(a_env)
+        num_enviroments -= 1
 
 
 '''
