@@ -27,7 +27,7 @@ class Vehicle(object):
         # dynamic attributes 
         self.lead_vehicle = None
         self.velocity = 0 # v, current velocity 
-        self.net_distance = 5  # default non-zero actual gap, calculated by , 
+        self.net_distance = 10 # default non-zero actual gap 
         self.lane = 0 # binary: 0 for r, 1 for l 
         self.position = 0 # the head position 
         self.acceleartion = 0 # at t0
@@ -51,7 +51,7 @@ class Vehicle(object):
         self.lane = lane # binary: 0 for r, 1 for l 
         self.position = position # the head position 
         self.acceleartion = 0 # at t0
-        self.velocity = 8 # set all initial speed to 8 
+        self.velocity = 7 # set all initial speed to 7 
         # velocity is set d
         self.lead_vehicle = lead_vehicle
         self.index_curr_lane = index_curr_lane
@@ -69,7 +69,7 @@ class SmallV(Vehicle):
         super().__init__()
         self.type = 0
         self.length = round(random.uniform (4.00,4.74),2)
-        self.max_acceler = 2
+        self.max_acceler = 1
         self.comfor_decel = Constant.COMROT_DECEL_S # b
       
 class MediumV(Vehicle):
@@ -77,7 +77,7 @@ class MediumV(Vehicle):
         super().__init__()
         self.type = 1
         self.length = round(random.uniform (4.75,5.34),2)
-        self.max_acceler = 2.5
+        self.max_acceler = 1.3
         self.comfor_decel = Constant.COMROT_DECEL_M # b
 
 class LargeV(Vehicle):
@@ -85,9 +85,9 @@ class LargeV(Vehicle):
         super().__init__()
         self.type = 2
         self.length = round(random.uniform (5.45,6.45),2)
-        self.max_acceler = 1
+        self.max_acceler = 0.75
         self.comfor_decel = Constant.COMROT_DECEL_L # b
-
+ 
 class IDM():
     @staticmethod
     def calc_net_distance(vehicle):  
@@ -141,7 +141,7 @@ def cal_spacing_and_density(curr_density, roadlen, a_vehicle):
     '''get a safe spacing that ensures a "1.5 second rule" given nature of NYC 
     '''
     safe_spacing = Constant.MIN_SAFETY_GAP   
-    spacing = safe_spacing + round(random.uniform (0,4.0),1) 
+    spacing = safe_spacing + round(random.uniform (1,4.5),1) 
     # print("The car length is: <<" , a_vehicle.length, ">>\n")
     new_density = curr_density + (spacing + a_vehicle.length) / roadlen
     return spacing , new_density 
