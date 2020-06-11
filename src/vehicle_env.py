@@ -53,8 +53,7 @@ class Vehicle(object):
             self.desired_acceleration = IDM.calc_desired_acceler(self) # updated by the IDM model.
             return True 
         else:
-            # print("HERE NO SETTING ACCELERATION!!!")]
-            print(self.lead_vehicle, "    ", self.net_distance, "    ", self.desired_acceleration, " \n" )
+            # print(self.lead_vehicle, "    ", self.net_distance, "    ", self.desired_acceleration, " \n" )
             return False # meaning that this is the leading car in the lane
         
 class SmallV(Vehicle):
