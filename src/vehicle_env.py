@@ -15,6 +15,9 @@ import Constant
 __author__ = "Haoran Su, Kejian Shi"
 __version__ = "1.0.2"
 
+
+ratio_list = [1,2,1] # default 1,2,1; updated by command line arguments
+
 class Vehicle(object):
     def __init__(self, length = None):
         # static parameters, for the Intelligent Driver Model 
@@ -163,18 +166,9 @@ class Environment:
         '''
         # generate a vehicle with chance 1:3:1 being smallV,mediumV,largeV, respectively (reflect NYC traffic)
         '''
-        #print("list:" , random.choices(self.classes, weights = [1,2,1]))
-        comp_s, comp_m, comp_l = 1, 2, 1
-        # by default the composition is 1:2:1 for s,m,l cars
-        if len(sys.argv) == 4:
-            num_list = []
-            for token in sys.argv[3]: 
-                if token.isdigit():
-                    num_list.append(token)
-            comp_s = num_list[0]
-            comp_m = num_list[1]
-            comp_l = num_list[2]
-        a_vehicle = random.choices(self.classes, weights = [comp_s,comp_m,comp_l])[0]() 
+        #print("list:" , random.choices(self.classes, weights = [1,2,1])) 
+        a_vehicle = random.choices(self.classes, weights = [ratio_list[0],
+                                    ratio_list[1],ratio_list[2]])[0]() 
         return a_vehicle
 
     def is_valid(self,curr_density,curr_lane):
@@ -281,8 +275,17 @@ class Environment:
         # print(" ------------------------------- \n\n", self.env_status, sep = '---') 
     def __repr__(self):
         return self.__str__()
+        
+        
 
-if __name__ == "__main__":
+def main():
+    if len(sys.argv) == 4:
+        indx = 0
+        for token in sys.argv[3]: 
+            if token.isdigit():
+                ratio_list[indx] = int(token)
+                indx += 1
+                    
     np.set_printoptions(suppress=True)
     envs = []
     num_enviroments = int(sys.argv[1])
@@ -313,7 +316,13 @@ if __name__ == "__main__":
         log.write("Env <%d> has: \r %d small cars, \r %d medium cars \r %d large cars \n\r" % (indx, raw_env.num_smallV,
                                     raw_env.num_mediumV, raw_env.num_largeV))
         envs.append(a_env)
-        num_enviroments -= 1
+        num_enviroments -= 1   
+    return envs
+
+if __name__ == "__main__":
+    main()
+ 
+    
 
 
 '''

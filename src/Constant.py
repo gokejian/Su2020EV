@@ -1,6 +1,4 @@
-import os 
-import sys 
- 
+
 __author__ = "Haoran Su, Kejian Shi"
 __version__ = "1.0.1"
 
