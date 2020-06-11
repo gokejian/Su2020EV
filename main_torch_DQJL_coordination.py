@@ -8,10 +8,13 @@ from utils import plotLearning
 import numpy as np
 from gym import wrappers
 
+L = 200
 l_gap = 2
 delta_t = 0.5
 
-
+"""
+Vehicle: state of the vehicle
+"""
 def calculate_reward(vehs):
     """
     Calculate reward for the given state
@@ -29,15 +32,21 @@ def calculate_reward(vehs):
             back_pos = vehs[j][0] - vehs[j][3]
             if front_pos + l_gap > back_pos and vehs[i][1] == vehs[j][i]:
                 reward = -1000
-    # Then we penalize every timestamp elapsed:
+    # If any vehicle is on lane 0 and vehicle position has not exceed the roadway length:
     for veh in vehs:
-        if veh[1] == 0:
+        if veh[1] == 0 and (veh[0] + veh[3] <= L):
             reward = -1
 
     return reward
 
 
 def random_deceleration(most_comfortable_deceleration, lane_pos):
+    """
+    Return a deceleration based on given attribute of the vehicle
+    :param most_comfortable_deceleration: the given attribute of the vehicle
+    :param lane_pos: y
+    :return: a deceleration adopted by human driver
+    """
     if lane_pos:
         sigma = 0.2
     else:
@@ -77,8 +86,6 @@ def step(vehs, action):
             flag = True
 
     done = (flag == False)
-
-
     return observation_, reward, done
 
 
