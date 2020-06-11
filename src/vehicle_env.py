@@ -5,6 +5,7 @@
 '''
 import sys 
 import os
+import shutil
 import random 
 import numpy as np
 import math 
@@ -12,7 +13,7 @@ import Constant
 
  
 __author__ = "Haoran Su, Kejian Shi"
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 
 class Vehicle(object):
     def __init__(self, length = None):
@@ -21,6 +22,7 @@ class Vehicle(object):
         self.min_safety_gap = Constant.MIN_SAFETY_GAP # s0 
         self.safe_time_headway = Constant.SAFE_TIME_HEADWAY # T 
         self.length = length
+        self.index_curr_lane = 0 # give a numerical order of the car
     
         # dynamic attributes 
         self.lead_vehicle = None
@@ -30,6 +32,7 @@ class Vehicle(object):
         self.position = 0 # the head position 
         self.acceleartion = 0 # at t0
         self.desired_acceleration = 0 # updated by the IDM model.  
+    
 
     def cal_safetime_headway(self):
         ''' ?? What about safetime headway 
@@ -43,14 +46,15 @@ class Vehicle(object):
         return self.lead_vehicle is not None
 
 
-    def set_attributes(self, lead_vehicle,lane, position):
+    def set_attributes(self, lead_vehicle,lane, position,index_curr_lane):
         # print("After entering set attributes, lead_vehicle is:{}",format(lead_vehicle)) 
         self.lane = lane # binary: 0 for r, 1 for l 
         self.position = position # the head position 
         self.acceleartion = 0 # at t0
-        self.velocity = generate_num_margin_error(8,0)
+        self.velocity = 8 # set all initial speed to 8 
         # velocity is set d
         self.lead_vehicle = lead_vehicle
+        self.index_curr_lane = index_curr_lane
         if self.lead_vehicle is not None: 
             #print("!!! ENTERS set_attribute.(lead_vehicle is not None)!!!!!!\n\n")
             self.net_distance = IDM.calc_net_distance(self)
@@ -110,10 +114,7 @@ class IDM():
         acceleration = math.pow(
             (vehicle.velocity / vehicle.get_desired_velocity()), 4)
         deceleration = math.pow(IDM.calc_desired_gap(vehicle) / vehicle.net_distance, 2)
-        # note here vehicle.net_distance should be non-zero. Default set to 2
-
-        # print ("current desired acceleration is <<<", 
-                        # float(vehicle.max_acceler * (1 - acceleration - deceleration)), ">>>\n\n")
+        # note here vehicle.net_distance should be non-zero. Default set to 5
 
         return round(float(vehicle.max_acceler * (1 - acceleration - deceleration)),2)
 
@@ -139,12 +140,12 @@ def generate_num_margin_error(num, error_range):
 def cal_spacing_and_density(curr_density, roadlen, a_vehicle):
     '''get a safe spacing that ensures a "1.5 second rule" given nature of NYC 
     '''
-    safe_spacing = Constant.MIN_SAFETY_GAP + 1  
-    spacing = safe_spacing + round(random.uniform (0,2.0),1) 
+    safe_spacing = Constant.MIN_SAFETY_GAP   
+    spacing = safe_spacing + round(random.uniform (0,4.0),1) 
     # print("The car length is: <<" , a_vehicle.length, ">>\n")
     new_density = curr_density + (spacing + a_vehicle.length) / roadlen
     return spacing , new_density 
-
+ 
 class Environment:  
     def __init__(self, density = round(random.uniform (0.1,0.9),1), roadlen = 200):
         self.classes = (SmallV,MediumV,LargeV)
@@ -217,27 +218,24 @@ class Environment:
 
                 '''
 
-
                 position = round(self.cursor + (sign_adjust * spacing),2)  # lane is 0 or 1 
                
-
-              
                 # [head, rear]
 
                # print("AT LINE 196, the lead_vehicle updated?: ", lead_vehicle)
                
-                a_vehicle.set_attributes(lead_vehicle,lane,position)
+                a_vehicle.set_attributes(lead_vehicle,lane,position,index_curr_lane)
 
-                print("====== NOW TESTING THE ARITHMETICS ====== \n The car has <{}> lead_vehicle  \n"
-                                    "The car has position <{}>,\n" 
-                                    "The spacing is <{}>,\n The net_distance is <{}>,\n it has length <{}>\
-                                        ".format(a_vehicle.has_lead_vehicle(),a_vehicle.position,spacing,
-                                                 a_vehicle.net_distance,a_vehicle.length))
-        
+                if Constant.DEBUG:
+                    print("====== NOW TESTING THE ARITHMETICS ====== \n The car on lane <{}> \n The car has <{}> lead_vehicle  \n"
+                                        "The car has position <{}>,\n" 
+                                        "The spacing is <{}>,\n The net_distance is <{}>,\n it has length <{}>\
+                                            ".format(a_vehicle.lane,a_vehicle.has_lead_vehicle(),a_vehicle.position,spacing,
+                                                    a_vehicle.net_distance,a_vehicle.length))
+            
                 self.env_status.append([position,lane,a_vehicle.velocity,
                                         a_vehicle.length, a_vehicle.comfor_decel, a_vehicle.desired_acceleration])
-              
-
+            
                 #print(self.env_status, '\n\n\n')
                 if a_vehicle.type == 0:
                     self.num_smallV += 1 
@@ -289,14 +287,31 @@ if __name__ == "__main__":
     envs = []
     num_enviroments = int(sys.argv[1])
     store_num_env = num_enviroments 
-    
+
     os.chdir("/Users/markshi/Documents/GitHub/research_projects/NYU/Su2020EV/outputs")
+
+    folder = os.getcwd()
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print('Failed to delete %s. Reason: %s' % (file_path, e))
+    log = open("log.txt","w+")
+    log.write("Total of %d env(s) generated\r\n " % (store_num_env))
+
     while num_enviroments:
-        a_env = Environment().generate_road_env()
+        raw_env = Environment()
+        a_env = raw_env.generate_road_env()
         np_env = np.array(a_env)
-        indx = store_num_env - num_enviroments
-        # sys.stdout = open(os.getcwd() + "/env_{}.txt".format(indx),'w')
-        # print(np_env)
+        indx = store_num_env - num_enviroments         
+        sys.stdout = open(os.getcwd() + "/env_ %i .txt" % (indx),'w')
+        print(np_env)
+        log.write("Env <%d> has: \r %d small cars, \r %d medium cars \r %d large cars \n\r" % (indx, raw_env.num_smallV,
+                                    raw_env.num_mediumV, raw_env.num_largeV))
         envs.append(a_env)
         num_enviroments -= 1
 

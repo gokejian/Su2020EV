@@ -8,7 +8,7 @@ __version__ = "1.0.1"
 Constants for road environment initilization with SI Metrics
 '''
 
-DEBUG = False 
+DEBUG = False
 
 ROAD_LEN = 200
 MIN_SAFETY_GAP = 2  # s_0 
