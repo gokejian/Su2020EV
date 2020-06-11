@@ -69,7 +69,7 @@ class SmallV(Vehicle):
         super().__init__()
         self.type = 0
         self.length = round(random.uniform (4.00,4.74),2)
-        self.max_acceler = 3
+        self.max_acceler = 2
         self.comfor_decel = Constant.COMROT_DECEL_S # b
       
 class MediumV(Vehicle):
@@ -77,7 +77,7 @@ class MediumV(Vehicle):
         super().__init__()
         self.type = 1
         self.length = round(random.uniform (4.75,5.34),2)
-        self.max_acceler = 3.5
+        self.max_acceler = 2.5
         self.comfor_decel = Constant.COMROT_DECEL_M # b
 
 class LargeV(Vehicle):
@@ -85,7 +85,7 @@ class LargeV(Vehicle):
         super().__init__()
         self.type = 2
         self.length = round(random.uniform (5.45,6.45),2)
-        self.max_acceler = 2
+        self.max_acceler = 1
         self.comfor_decel = Constant.COMROT_DECEL_L # b
 
 class IDM():
