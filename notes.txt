@@ -180,3 +180,19 @@ Paper:
 
 
 5. b + noise 是怎么回事
+
+
+
+
+重要问题：
+    lead_veihicle 这个field 丢失了！！ 
+    1. 跟python 中丢失 reference 有关 -- OK, it's actually 10 env resulting in stupid conclusion 
+    2. set attribute，若lead_vehicle None 不进入 setting,则net_distance 可能是0 
+    3. 在cal_net_中，若前面无车，那也应该是return 很大的value
+
+
+    4. lane 0 的desired_acceleration 明显比lane 大得多 polynomial magnitude\
+    5. Yes, position of the vehicle head is a problem 
+    6. 修复 lane = 1 车头的问题 
+    7. 在net_distance 中 
+    8. 每一次，os.delete outputs directory 

@@ -27,7 +27,8 @@ class IDM(object):
 
     def cal_safe_headway(a_vehicle):  
         veloc = a_vehicle.velocity
-        if a_vehicle.front_vehicle: ''' if front_ve is not None '''
+        if a_vehicle.front_vehicle: 
+            ''' if front_ve is not None '''
             front_veloc = a_vehicle.front_vehicle.velocity
         else:
             front_veloc = veloc
