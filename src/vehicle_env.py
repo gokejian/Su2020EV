@@ -5,6 +5,7 @@
 '''
 import sys 
 import os
+import shutil
 import random 
 import numpy as np
 import math 
@@ -12,7 +13,10 @@ import Constant
 
  
 __author__ = "Haoran Su, Kejian Shi"
-__version__ = "1.0.1"
+__version__ = "1.0.2"
+
+
+ratio_list = [1,2,1] # default 1,2,1; updated by command line arguments
 
 class Vehicle(object):
     def __init__(self, length = None):
@@ -21,15 +25,17 @@ class Vehicle(object):
         self.min_safety_gap = Constant.MIN_SAFETY_GAP # s0 
         self.safe_time_headway = Constant.SAFE_TIME_HEADWAY # T 
         self.length = length
+        self.index_curr_lane = 0 # give a numerical order of the car
     
         # dynamic attributes 
         self.lead_vehicle = None
         self.velocity = 0 # v, current velocity 
-        self.net_distance = 5  # default non-zero actual gap, calculated by , 
+        self.net_distance = 10 # default non-zero actual gap 
         self.lane = 0 # binary: 0 for r, 1 for l 
         self.position = 0 # the head position 
         self.acceleartion = 0 # at t0
         self.desired_acceleration = 0 # updated by the IDM model.  
+    
 
     def cal_safetime_headway(self):
         ''' ?? What about safetime headway 
@@ -43,14 +49,15 @@ class Vehicle(object):
         return self.lead_vehicle is not None
 
 
-    def set_attributes(self, lead_vehicle,lane, position):
+    def set_attributes(self, lead_vehicle,lane, position,index_curr_lane):
         # print("After entering set attributes, lead_vehicle is:{}",format(lead_vehicle)) 
         self.lane = lane # binary: 0 for r, 1 for l 
         self.position = position # the head position 
         self.acceleartion = 0 # at t0
-        self.velocity = generate_num_margin_error(8,0)
+        self.velocity = 7 # set all initial speed to 7 
         # velocity is set d
         self.lead_vehicle = lead_vehicle
+        self.index_curr_lane = index_curr_lane
         if self.lead_vehicle is not None: 
             #print("!!! ENTERS set_attribute.(lead_vehicle is not None)!!!!!!\n\n")
             self.net_distance = IDM.calc_net_distance(self)
@@ -65,7 +72,7 @@ class SmallV(Vehicle):
         super().__init__()
         self.type = 0
         self.length = round(random.uniform (4.00,4.74),2)
-        self.max_acceler = 3
+        self.max_acceler = 1
         self.comfor_decel = Constant.COMROT_DECEL_S # b
       
 class MediumV(Vehicle):
@@ -73,7 +80,7 @@ class MediumV(Vehicle):
         super().__init__()
         self.type = 1
         self.length = round(random.uniform (4.75,5.34),2)
-        self.max_acceler = 3.5
+        self.max_acceler = 1.3
         self.comfor_decel = Constant.COMROT_DECEL_M # b
 
 class LargeV(Vehicle):
@@ -81,9 +88,9 @@ class LargeV(Vehicle):
         super().__init__()
         self.type = 2
         self.length = round(random.uniform (5.45,6.45),2)
-        self.max_acceler = 2
+        self.max_acceler = 0.75
         self.comfor_decel = Constant.COMROT_DECEL_L # b
-
+ 
 class IDM():
     @staticmethod
     def calc_net_distance(vehicle):  
@@ -110,10 +117,7 @@ class IDM():
         acceleration = math.pow(
             (vehicle.velocity / vehicle.get_desired_velocity()), 4)
         deceleration = math.pow(IDM.calc_desired_gap(vehicle) / vehicle.net_distance, 2)
-        # note here vehicle.net_distance should be non-zero. Default set to 2
-
-        # print ("current desired acceleration is <<<", 
-                        # float(vehicle.max_acceler * (1 - acceleration - deceleration)), ">>>\n\n")
+        # note here vehicle.net_distance should be non-zero. Default set to 5
 
         return round(float(vehicle.max_acceler * (1 - acceleration - deceleration)),2)
 
@@ -139,12 +143,12 @@ def generate_num_margin_error(num, error_range):
 def cal_spacing_and_density(curr_density, roadlen, a_vehicle):
     '''get a safe spacing that ensures a "1.5 second rule" given nature of NYC 
     '''
-    safe_spacing = Constant.MIN_SAFETY_GAP + 1  
-    spacing = safe_spacing + round(random.uniform (0,2.0),1) 
+    safe_spacing = Constant.MIN_SAFETY_GAP   
+    spacing = safe_spacing + round(random.uniform (1,4.5),1) 
     # print("The car length is: <<" , a_vehicle.length, ">>\n")
     new_density = curr_density + (spacing + a_vehicle.length) / roadlen
     return spacing , new_density 
-
+ 
 class Environment:  
     def __init__(self, density = round(random.uniform (0.1,0.9),1), roadlen = 200):
         self.classes = (SmallV,MediumV,LargeV)
@@ -162,18 +166,9 @@ class Environment:
         '''
         # generate a vehicle with chance 1:3:1 being smallV,mediumV,largeV, respectively (reflect NYC traffic)
         '''
-        #print("list:" , random.choices(self.classes, weights = [1,2,1]))
-        comp_s, comp_m, comp_l = 1, 2, 1
-        # by default the composition is 1:2:1 for s,m,l cars
-        if len(sys.argv) == 4:
-            num_list = []
-            for token in sys.argv[3]: 
-                if token.isdigit():
-                    num_list.append(token)
-            comp_s = num_list[0]
-            comp_m = num_list[1]
-            comp_l = num_list[2]
-        a_vehicle = random.choices(self.classes, weights = [comp_s,comp_m,comp_l])[0]() 
+        #print("list:" , random.choices(self.classes, weights = [1,2,1])) 
+        a_vehicle = random.choices(self.classes, weights = [ratio_list[0],
+                                    ratio_list[1],ratio_list[2]])[0]() 
         return a_vehicle
 
     def is_valid(self,curr_density,curr_lane):
@@ -217,27 +212,24 @@ class Environment:
 
                 '''
 
-
                 position = round(self.cursor + (sign_adjust * spacing),2)  # lane is 0 or 1 
                
-
-              
                 # [head, rear]
 
                # print("AT LINE 196, the lead_vehicle updated?: ", lead_vehicle)
                
-                a_vehicle.set_attributes(lead_vehicle,lane,position)
+                a_vehicle.set_attributes(lead_vehicle,lane,position,index_curr_lane)
 
-                print("====== NOW TESTING THE ARITHMETICS ====== \n The car has <{}> lead_vehicle  \n"
-                                    "The car has position <{}>,\n" 
-                                    "The spacing is <{}>,\n The net_distance is <{}>,\n it has length <{}>\
-                                        ".format(a_vehicle.has_lead_vehicle(),a_vehicle.position,spacing,
-                                                 a_vehicle.net_distance,a_vehicle.length))
-        
+                if Constant.DEBUG:
+                    print("====== NOW TESTING THE ARITHMETICS ====== \n The car on lane <{}> \n The car has <{}> lead_vehicle  \n"
+                                        "The car has position <{}>,\n" 
+                                        "The spacing is <{}>,\n The net_distance is <{}>,\n it has length <{}>\
+                                            ".format(a_vehicle.lane,a_vehicle.has_lead_vehicle(),a_vehicle.position,spacing,
+                                                    a_vehicle.net_distance,a_vehicle.length))
+            
                 self.env_status.append([position,lane,a_vehicle.velocity,
                                         a_vehicle.length, a_vehicle.comfor_decel, a_vehicle.desired_acceleration])
-              
-
+            
                 #print(self.env_status, '\n\n\n')
                 if a_vehicle.type == 0:
                     self.num_smallV += 1 
@@ -283,22 +275,54 @@ class Environment:
         # print(" ------------------------------- \n\n", self.env_status, sep = '---') 
     def __repr__(self):
         return self.__str__()
+        
+        
 
-if __name__ == "__main__":
+def main():
+    if len(sys.argv) == 4:
+        indx = 0
+        for token in sys.argv[3]: 
+            if token.isdigit():
+                ratio_list[indx] = int(token)
+                indx += 1
+                    
     np.set_printoptions(suppress=True)
     envs = []
     num_enviroments = int(sys.argv[1])
     store_num_env = num_enviroments 
-    
+
     os.chdir("/Users/markshi/Documents/GitHub/research_projects/NYU/Su2020EV/outputs")
+
+    folder = os.getcwd()
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print('Failed to delete %s. Reason: %s' % (file_path, e))
+    log = open("log.txt","w+")
+    log.write("Total of %d env(s) generated\r\n " % (store_num_env))
+
     while num_enviroments:
-        a_env = Environment().generate_road_env()
+        raw_env = Environment()
+        a_env = raw_env.generate_road_env()
         np_env = np.array(a_env)
-        indx = store_num_env - num_enviroments
-        # sys.stdout = open(os.getcwd() + "/env_{}.txt".format(indx),'w')
-        # print(np_env)
+        indx = store_num_env - num_enviroments         
+        sys.stdout = open(os.getcwd() + "/env_ %i .txt" % (indx),'w')
+        print(np_env)
+        log.write("Env <%d> has: \r %d small cars, \r %d medium cars \r %d large cars \n\r" % (indx, raw_env.num_smallV,
+                                    raw_env.num_mediumV, raw_env.num_largeV))
         envs.append(a_env)
-        num_enviroments -= 1
+        num_enviroments -= 1   
+    return envs
+
+if __name__ == "__main__":
+    main()
+ 
+    
 
 
 '''

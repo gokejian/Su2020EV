@@ -1,0 +1,6 @@
+Total of 4 env(s) generated
+ Env <0> has:  3 small cars,  7 medium cars  13 large cars 
+Env <1> has:  3 small cars,  5 medium cars  16 large cars 
+Env <2> has:  6 small cars,  9 medium cars  10 large cars 
+Env <3> has:  3 small cars,  8 medium cars  13 large cars 
+
