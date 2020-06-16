@@ -3,7 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="47ee0560-de4a-40ed-a6c0-fea70dbe2698" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DQN_Agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/DQN_Agent.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main_torch_DQJL_coordination.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_torch_DQJL_coordination.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/env_ 0 .txt" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/env_0.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,7 +37,16 @@
   </component>
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="fileTemplates" />
+    <property name="settings.editor.selected.configurable" value="PyConsoleConfigurable.Python Console" />
+  </component>
+  <component name="PyConsoleOptionsProvider">
+    <option name="myPythonConsoleState">
+      <console-settings module-name="Su2020EV" is-module-sdk="true" working-directory="$PROJECT_DIR$">
+        <option name="myUseModuleSdk" value="true" />
+        <option name="myModuleName" value="Su2020EV" />
+        <option name="myWorkingDirectory" value="$PROJECT_DIR$" />
+      </console-settings>
+    </option>
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -54,5 +65,15 @@
       <updated>1591221346172</updated>
     </task>
     <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="655" y="181" key="#xdebugger.XInspectDialog" timestamp="1592246681912">
+      <screen x="0" y="23" width="1440" height="797" />
+    </state>
+    <state x="655" y="181" key="#xdebugger.XInspectDialog/0.23.1440.797@0.23.1440.797" timestamp="1592246681912" />
+    <state x="221" y="60" key="SettingsEditor" timestamp="1592245715436">
+      <screen x="0" y="23" width="1440" height="797" />
+    </state>
+    <state x="221" y="60" key="SettingsEditor/0.23.1440.797@0.23.1440.797" timestamp="1592245715436" />
   </component>
 </project>
