@@ -29,8 +29,8 @@ import numpy as np
 #
 #         return actions
 # dimensions for MLP and FC layers
-MLP_dims = [16, 16, 32, 32, 64, 128, 256, 1]
-FC_dims = [1, 16, 32, 64, 1]
+MLP_dims = [6, 16, 32, 32, 64, 128, 256, 6]
+FC_dims = [6, 16, 32, 64, 32, 16, 1]
 
 # Some utility functions
 def get_and_init_FC_layer(din, dout):

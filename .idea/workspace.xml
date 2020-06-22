@@ -5,7 +5,6 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DQN_Agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/DQN_Agent.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main_torch_DQJL_coordination.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_torch_DQJL_coordination.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/network_structure.py" beforeDir="false" afterPath="$PROJECT_DIR$/network_structure.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
