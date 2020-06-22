@@ -2,43 +2,52 @@
 """Author: Haoran Su
 Email: hs1854@nyu.edu
 """
-import gym
-from DQN_Agent import DeepQNetwork, Agent
+from DQN_Agent import VehicleNet, Agent
 from utils import plotLearning
 import numpy as np
 
-from gym import wrappers
+# Global parameters
+L = 200  # Length of the roadway segment
+l_gap = 2  # Minimum safety gap
+delta_t = 0.5  # length of the timestamp interval
 
-L = 200
-l_gap = 2
-delta_t = 0.5
+
+""" Each vehicle is described as veh = [x, y, v, l, b*, status]
+"""
 
 """
 Vehicle: state of the vehicle
 """
-def calculate_reward(vehs):
+
+def calculate_reward(observation_, obeservation, action):
     """
     Calculate reward for the given state
     :param vehs:
-    :return: reward, a scalar for this timestamp
+    :return: reward, a scalar for this state
     """
-    num_vehs = len(vehs)
-
-
+    num_vehicles = len(observation_)
+    # Initialize reward
     reward = 0
+    # For the new state:
     # First, we want to check collision:
-    for i in range(num_vehs):
-        for j in range(i+1, num_vehs):
+    for i in range(num_vehicles):
+        for j in range(i+1, num_vehicles):
             # Front pos of veh i:
-            front_pos = vehs[i][0]
+            front_pos = observation_[i][0]
             # Back pos of veh j:
-            back_pos = vehs[j][0] - vehs[j][3]
-            if front_pos + l_gap > back_pos and vehs[i][1] == vehs[j][1]:
-                reward = -1000
+            back_pos = observation_[j][0] - observation_[j][3]
+            if front_pos + l_gap > back_pos and observation_[i][1] == observation_[j][1]:
+                reward -= 1000
     # If any vehicle is on lane 0 and vehicle position has not exceed the roadway length:
-    for veh in vehs:
-        if veh[1] == 0 and (veh[0] - veh[3] <= L):
-            reward = -1
+    for veh in observation_:
+        if (veh[1] == 0) and (veh[0] - veh[3] <= L):
+            reward -= 1
+
+    # For the old state:
+    # Force the vehicle continue to yield if he is instructed to do so:
+    for i in range(observation):
+        if observation[i] == 1 and action[i] != 1:
+            reward -= 1000
 
     return reward
 
@@ -78,10 +87,17 @@ def step(observation, action):
         # New position for vehicles who pulled over
         new_y = (observation[i][1] == 0) and (new_v == 0) and (action_i == 1)
 
-        new_veh = [new_x, new_y, new_v, observation[i][3], observation[i][4]]
+        # If the status of the vehicle indicating not yielding, but the action is to yield, update status:
+        if (observation[i][5] == 0) and action[i]:
+            new_status = 1
+        else:
+            new_status = 0
+
+        new_veh = [new_x, new_y, new_v, observation[i][3], observation[i][4], new_status]
         observation_.append(new_veh)
 
-    reward = calculate_reward(observation_)
+    # Calculate reward
+    reward = calculate_reward(observation_, observation, action)
 
     # Check if the process has completed by examine no vehicles are on lane 0 in the new state:
     flag = False
@@ -98,23 +114,14 @@ def step(observation, action):
 
 # Main:
 if __name__ == '__main__':
-    # Initialize the Agent Brain, input dimension should be 5 (x, y, v, l, b), n_actions should be depending on number of vehicles
-    brain = Agent(gamma=0.99, epsilon=1.0, batch_size=64, n_actions=2, input_dims=[5], alpha=0.003)
-
+    agent = Agent(gamma=0.99, epsilon=1.0, batch_size=64, input_dims=[5], lr=0.003)
     scores = []
     eps_history = []
     num_games = 500
     score = 0
 
     for i in range(num_games):
-        if i % 10 == 0 and i > 0:
-            avg_score = np.mean(scores[max(0, i-10):(i+1)])
-            print('episode: ', i,'score: ', score,
-                 ' average score %.3f' % avg_score,
-                'epsilon %.3f' % brain.EPSILON)
-        else:
-            print('episode: ', i,'score: ', score)
-        eps_history.append(brain.EPSILON)
+        score = 0
         done = False
 
         # Initial observation/states/vehs is a random draft from initial conditions
@@ -140,22 +147,28 @@ if __name__ == '__main__':
              [74.26,  1.,    8.,    4.58,  2.],
              [81.94,  1.,    8.,    4.05,  2.],
              [90.19,  1.,   8.,    4.92,  1.8]]
-        score = 0
+
         while not done:
             # Select action based on chooseAction
-            action = brain.chooseAction(observation)
-            # Step
+            action = agent.choose_action(observation)
+            # Step function, recording how states transform
             observation_, reward, done = step(observation, action)
+
             score += reward
-            brain.storeTransition(observation, action, reward, observation_,
-                                  done)
+            agent.store_transition(observation, action, reward, observation_, done)
             observation = observation_
-            brain.learn()
+            agent.learn()
 
         scores.append(score)
 
+        eps_history.append(agent.epsilon)
+        avg_score = np.mean(scores[-100:])
+
+    print('episode ', i, 'score %.2f' % score,
+          'average score %.2f' % avg_score,
+          'epsilon %.2f' % agent.epsilon)
+    """ Plot the learning curve
+    """
     x = [i+1 for i in range(num_games)]
-    filename = str(num_games) + 'Games' + 'Gamma' + str(brain.GAMMA) + \
-               'Alpha' + str(brain.ALPHA) + 'Memory' + \
-                str(brain.Q_eval.fc1_dims) + '-' + str(brain.Q_eval.fc2_dims) +'.png'
+    filename = 'vehicle_coordination.png'
     plotLearning(x, scores, eps_history, filename)

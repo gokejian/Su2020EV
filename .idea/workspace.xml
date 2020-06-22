@@ -5,7 +5,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DQN_Agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/DQN_Agent.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main_torch_DQJL_coordination.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_torch_DQJL_coordination.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/env_ 0 .txt" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/env_0.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/network_structure.py" beforeDir="false" afterPath="$PROJECT_DIR$/network_structure.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,11 +21,6 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-  </component>
-  <component name="ProjectFrameBounds">
-    <option name="y" value="23" />
-    <option name="width" value="1440" />
-    <option name="height" value="797" />
   </component>
   <component name="ProjectId" id="1dFI8Z98NI5elTJCu9ZIPIix6R4" />
   <component name="ProjectLevelVcsManager">

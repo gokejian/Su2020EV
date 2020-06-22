@@ -10,7 +10,6 @@ import torch.nn.functional as Functional
 # Initialize a full connected layer.
 # Input: input_dim, output_dim
 def get_and_init_FC_layer(input_dim, output_dim):
-
     linear_layer = nn.Linear(input_dim, output_dim)
     # Initialize weights and bias for this linear layer
     nn.init.xavier_uniform_(linear_layer.weight.data, gain=nn.init.calculate_gain('relu'))
@@ -31,7 +30,6 @@ def get_mlp_layers(dims, do_last_relu):
     return layers
 
 
-# VehiclewiseMLP class identifies each vehicle as an point-like element
 class VehiclewiseMLP(nn.Sequential):
     def __init__(self, dims, do_last_relu=False):
         # Initialize layers with
@@ -42,7 +40,6 @@ class VehiclewiseMLP(nn.Sequential):
 # Define a global pool class to yield global pooling
 class GlobalPool(nn.Module):
     '''BxNxK -> BxK'''
-
     def __init__(self, pool_layer):
         super(GlobalPool, self).__init__()
         self.Pool = pool_layer
@@ -55,6 +52,8 @@ class GlobalPool(nn.Module):
 
 # Global Max Pooling
 class PointNetGlobalMax(nn.Sequential):
+    """Suppose 1 batch * 6 vehicles * 5 attributes, we would like to get 1 batch * 6 actions
+    Which is saying the dimension change should be B*N*dim[0] -> B*N"""
     '''BxNxdims[0] -> Bxdims[-1]'''
 
     def __init__(self, dims, do_last_relu=False):
@@ -65,14 +64,33 @@ class PointNetGlobalMax(nn.Sequential):
         super(PointNetGlobalMax, self).__init__(*layers)
 
 
-# Main Structure: PointNet Vanilla structure
-class PointNetVanilla(nn.Sequential):
-    def __init__(self, MLP_dims, FC_dims, MLP_doLastRelu=False):
+class VehicleNet(nn.Module):
+    def __init__(self, dim_pointNet, dim_output):
+        super(VehicleNet, self).__init__()
+        self.pointNetGlobalMax = PointNetGlobalMax(dim_pointNet, do_last_relu=False)
 
-        # MLP
-        assert(MLP_dims[-1] == FC_dims[0])
-        layers = [
-            PointNetGlobalMax(MLP_dims, do_last_relu= MLP_doLastRelu),
-        ]
-        layers.extend(get_mlp_layers(FC_dims, False))
-        super(PointNetVanilla, self).__init__(*layers)
+        self.VehiclewiseMLP = VehiclewiseMLP(dim_output, do_last_relu=False)
+
+    def forward(self, state):
+        x = self.pointNetGlobalMax(state)
+        # concatenate the global feature with local feature
+        y = torch.cat()
+        y = torch.sigmoid(y)
+        return y
+
+
+
+
+# # Main Structure: PointNet Vanilla structure
+# class PointNetVanilla(nn.Sequential):
+#     def __init__(self, MLP_dims, FC_dims, MLP_doLastRelu=False):
+#
+#         # MLP
+#         assert(MLP_dims[-1] == FC_dims[0])
+#         layers = [
+#             PointNetGlobalMax(MLP_dims, do_last_relu= MLP_doLastRelu),
+#         ]
+#         layers.extend(get_mlp_layers(FC_dims, False))
+#         super(PointNetVanilla, self).__init__(*layers)
+
+
