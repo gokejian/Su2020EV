@@ -1,0 +1,7 @@
+<configuration>
+    <input>
+        <net-file value = '200m_two_lane.net.xml'/>
+        <route-files value = '200m_two_lane.rou.xml'/>
+        <additional-files value="200m_two_lane.add.xml"/>
+    </input>
+</configuration>

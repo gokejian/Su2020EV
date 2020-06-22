@@ -108,7 +108,6 @@ class IDM():
                         vehicle.lead_vehicle.length - 
                         vehicle.position),2)
     
-
     @staticmethod
     def calc_desired_acceler(vehicle):
         """
@@ -182,7 +181,7 @@ class Environment:
         if rear will exceed the bound, or that it exceed density give it a small vehicle if possible.
         '''
         #[[x_0, y_0, length_0, v_0, acceleration_0= 0, desired_acceleration_0]
-        if len(sys.argv) == 3:
+        if len(sys.argv) >= 3:
             #d esignated density 
             self.density = float(sys.argv[2])
         index_curr_lane = 0 
@@ -211,7 +210,6 @@ class Environment:
                 modify the position calculation technique 
 
                 '''
-
                 position = round(self.cursor + (sign_adjust * spacing),2)  # lane is 0 or 1 
                
                 # [head, rear]
@@ -313,7 +311,7 @@ def main():
         indx = store_num_env - num_enviroments         
         sys.stdout = open(os.getcwd() + "/env_ %i .txt" % (indx),'w')
         print(np_env)
-        log.write("Env <%d> has: \r %d small cars, \r %d medium cars \r %d large cars \n\r" % (indx, raw_env.num_smallV,
+        log.write("Env <%d> has: \r %d small cars, \r %d medium cars, \r %d large cars. \n\r" % (indx, raw_env.num_smallV,
                                     raw_env.num_mediumV, raw_env.num_largeV))
         envs.append(a_env)
         num_enviroments -= 1   
