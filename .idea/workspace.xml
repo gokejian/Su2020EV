@@ -2,9 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="47ee0560-de4a-40ed-a6c0-fea70dbe2698" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/DDQN_Agent.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Processing.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main_torch_ddqn.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DQN_Agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/DQN_Agent.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main_torch_DQJL_coordination.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_torch_DQJL_coordination.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/env_ 1 .txt" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/env_1.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/env_ 2 .txt" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/env_2.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/env_ 3 .txt" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/env_3.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/env_0.txt" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/env_0.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,5 +75,13 @@
       <screen x="0" y="23" width="1440" height="797" />
     </state>
     <state x="221" y="60" key="SettingsEditor/0.23.1440.797@0.23.1440.797" timestamp="1592245715436" />
+    <state x="2077" y="154" width="586" height="735" key="find.popup" timestamp="1593285817937">
+      <screen x="1440" y="23" width="1920" height="1057" />
+    </state>
+    <state x="2077" y="154" width="586" height="735" key="find.popup/0.23.1440.804/1440.23.1920.1057@1440.23.1920.1057" timestamp="1593285817937" />
+    <state x="385" y="151" width="670" height="676" key="search.everywhere.popup" timestamp="1593112653010">
+      <screen x="0" y="23" width="1440" height="804" />
+    </state>
+    <state x="385" y="151" width="670" height="676" key="search.everywhere.popup/0.23.1440.804@0.23.1440.804" timestamp="1593112653010" />
   </component>
 </project>
