@@ -151,7 +151,7 @@ def cal_spacing_and_density(curr_density, roadlen, a_vehicle):
     return spacing , new_density 
  
 class Environment:  
-    def __init__(self, density = round(random.uniform (0.1,0.9),1), roadlen = 100):
+    def __init__(self, roadlen = 100):
         self.classes = (SmallV,MediumV,LargeV)
         self.num_left = 0
         self.num_right = 0 
@@ -159,7 +159,7 @@ class Environment:
         self.num_mediumV = 0 
         self.num_largeV = 0
         self.num_v = self.num_largeV + self.num_mediumV + self.num_smallV
-        self.density = density 
+        self.density = round(random.uniform (0.2,0.9),1)
         self.roadlen = roadlen
         self.cursor = roadlen # start position to fill vehicles 
         self.env_status = [] # keep track of all vehicle information as array of [int:vehicle_index, int:type, int: lane, tuple:center_position, tuple<tuple>: physical_range_at_the_environment, int:speed] 
@@ -280,6 +280,7 @@ def generate_env_nparray(num = 10): #default env is 10
     envs_lst = []
     while num:
         raw_env = Environment()
+        print(raw_env.density)
         a_env = raw_env.generate_road_env()
         np_env = np.array(a_env)
         envs_lst.append(np_env)
