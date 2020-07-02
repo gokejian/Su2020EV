@@ -145,7 +145,7 @@ def cal_spacing_and_density(curr_density, roadlen, a_vehicle):
     '''get a safe spacing that ensures a "1.5 second rule" given nature of NYC 
     '''
     safe_spacing = Constant.MIN_SAFETY_GAP   
-    spacing = safe_spacing + round(random.uniform (1,3.5),1) 
+    spacing = safe_spacing + round(random.uniform (1,3.0),1) 
     # print("The car length is: <<" , a_vehicle.length, ">>\n")
     new_density = curr_density + (spacing + a_vehicle.length) / roadlen
     return spacing , new_density 
@@ -185,7 +185,7 @@ class Environment:
         '''
         #[[x_0, y_0, length_0, v_0, acceleration_0= 0, desired_acceleration_0]
         if len(sys.argv) >= 3:
-            #d esignated density 
+            # designated density 
             self.density = float(sys.argv[2])
         index_curr_lane = 0 
         lane = 0 # start with right lane
@@ -243,7 +243,7 @@ class Environment:
                 if lane == 0: 
                     self.cursor = position - a_vehicle.length 
                 else: 
-                    self.cursor = position + a_vehicle.length 
+                    self.cursor = position
                 # cursor always points to the rear of the vehicle 
 
                 index_curr_lane += 1
@@ -276,8 +276,9 @@ class Environment:
         return self.__str__()
 
 def generate_env_nparray(num = 10): #default env is 10  
+    np.set_printoptions(suppress=True)
+    envs_lst = []
     while num:
-        envs_lst = []
         raw_env = Environment()
         a_env = raw_env.generate_road_env()
         np_env = np.array(a_env)

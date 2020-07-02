@@ -1,7 +1,7 @@
 #!/usr/bin/env python 
 # -*- coding: utf-8 -*-
 import vehicle_env
-
+import numpy as np
 
 def main():
     lst = vehicle_env.generate_env_nparray()
