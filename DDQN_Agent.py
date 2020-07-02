@@ -20,7 +20,7 @@ class ReplayBuffer():
                                         dtype=np.float32)
         self.action_memory = np.zeros(self.mem_size, dtype=np.int64)
         self.reward_memory = np.zeros(self.mem_size, dtype=np.float32)
-        self.terminal_memory = np.zeros(self.mem_size, dtype=np.uint8)
+        self.terminal_memory = np.zeros(self.mem_size, dtype=np.bool)
 
     def store_transition(self, state, action, reward, state_, done):
         index = self.mem_cntr % self.mem_size
@@ -50,22 +50,23 @@ class DuelingDeepQNetwork(nn.Module):
         self.checkpoint_dir = chkpt_dir
         self.checkpoint_file = os.path.join(self.checkpoint_dir, name)
 
-        self.fc1 = nn.Linear(*input_dims, 512)
+        self.fc1 = nn.Linear(60, 512)
         self.fc2 = nn.Linear(512, 1024)
         self.V = nn.Linear(1024, 1)
         self.A = nn.Linear(1024, n_actions)
 
-        self.optimizer = optim.Adam(self.parameters(), lr=lr)
+        self.optimizer = optim.SGD(self.parameters(), lr=lr)
         self.loss = nn.MSELoss()
         self.device = T.device('cuda:0' if T.cuda.is_available() else 'cpu')
         self.to(self.device)
 
-    def forward(self, state):
-        flat1 = F.relu(self.fc1(state))
+    def forward(self, states):
+        # flatten states:
+        states = states.view(states.shape[0], -1)
+        flat1 = F.relu(self.fc1(states))
         flat2 = F.relu(self.fc2(flat1))
         V = self.V(flat2)
         A = self.A(flat2)
-
         return V, A
 
     def save_checkpoint(self):
@@ -121,6 +122,7 @@ class Agent():
 
     def replace_target_network(self):
         if self.learn_step_counter % self.replace_target_cnt == 0:
+
             self.q_next.load_state_dict(self.q_eval.state_dict())
 
     def decrement_epsilon(self):
@@ -143,8 +145,7 @@ class Agent():
 
         self.replace_target_network()
 
-        state, action, reward, new_state, done = \
-                                self.memory.sample_buffer(self.batch_size)
+        state, action, reward, new_state, done = self.memory.sample_buffer(self.batch_size)
 
         states = T.tensor(state).to(self.q_eval.device)
         rewards = T.tensor(reward).to(self.q_eval.device)
@@ -164,7 +165,7 @@ class Agent():
         q_next = T.add(V_s_,
                         (A_s_ - A_s_.mean(dim=1, keepdim=True)))
 
-        q_eval = T.add(V_s_eval, (A_s_eval - A_s_eval.mean(dim=1,keepdim=True)))
+        q_eval = T.add(V_s_eval, (A_s_eval - A_s_eval.mean(dim=1, keepdim=True)))
 
         max_actions = T.argmax(q_eval, dim=1)
 

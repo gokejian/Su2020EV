@@ -3,7 +3,6 @@
 Email: hs1854@nyu.edu
 """
 import numpy as np
-
 # action is encoded as a 15-bits binary number
 
 
@@ -26,8 +25,8 @@ def decode_action(s_action):
 
 # Global parameters
 L = 200  # Length of the roadway segment
-l_gap = 2  # Minimum safety gap
-delta_t = 0.5  # length of the timestamp interval
+l_gap = 0.2  # Minimum safety gap
+delta_t = 0.25  # length of the timestamp interval
 
 """A vehicle feature vector should be described as:
 [x, y, v, l, b*, status].
@@ -43,7 +42,7 @@ def mapped_state(state):
     :param state: given state
     :return: new state
     """
-    num_diff = 15 - len(state)
+    num_diff = 10 - len(state)
     for i in range(num_diff):
         # status of which vehicle is 2, indicating this vehicle is trivial
         state.append([0, 0, 0, 0, 0, 2])
@@ -61,7 +60,7 @@ def random_deceleration(most_comfortable_deceleration, lane_pos):
     if lane_pos:
         sigma = 0.2
     else:
-        sigma = 0.4
+        sigma = 0.3
     return np.random.normal(most_comfortable_deceleration, sigma)
 
 
@@ -91,7 +90,7 @@ def calculate_reward(observation_):
                 reward -= 1000
     # If any vehicle is on lane 0 and vehicle position has not exceed the roadway length:
     for veh in observation_:
-        if (veh[1] == 0) and (veh[0] - veh[3] <= L):
+        if (veh[5] != 2) and (veh[1] == 0) and (veh[0] - veh[3] <= L):
             reward -= 1
 
     return reward
@@ -118,7 +117,7 @@ def step(observation, s_action):
         # Generate the actual deceleration adopted by human driver:
         b_actual = random_deceleration(observation[i][4], observation[i][1])
         # Velocity cannot be negative
-        new_v = max(0, observation[i][2] + b_actual * delta_t)
+        new_v = max(0, observation[i][2] - b_actual * delta_t)
         # New position for vehicles who pulled over
         new_y = (observation[i][1] == 0) and (new_v == 0) and (action_i == 1)
 
@@ -142,7 +141,7 @@ def step(observation, s_action):
     # Check if the process has completed by examine no vehicles are on lane 0 in the new state:
     flag = False
     for veh in observation_:
-        if veh[2] == 0 and (veh[0] - veh[3] < L):
+        if (veh[5] != 2) and (veh[2] == 0) and (veh[0] - veh[3] < L):
             flag = True
 
     if flag:

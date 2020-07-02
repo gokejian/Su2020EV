@@ -2,34 +2,33 @@
 """Author: Haoran Su
 Email: hs1854@nyu.edu
 """
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
+
 import numpy as np
 from DDQN_Agent import Agent
 from utils import plotLearning
 import Processing
+
 observation = [[196.1, 0., 8., 5.08, 1., 0],
                [187.92, 0., 8., 4.28, 2., 0],
                [179.94, 0., 8., 5.22, 1.8, 0],
-               [126.9, 0., 8., 5.84, 1.5, 0],
-               [116.96, 0., 8., 5.13, 1.8, 0],
                [108.53, 0., 8., 4.05, 2., 0],
                [4.9, 1., 8., 4.8, 1.8, 0],
                [13.5, 1., 8., 4.82, 1.8, 0],
-               [21.52, 1., 8., 4.02, 2., 0],
-               [29.74, 1., 8., 4.73, 2., 0],
-               [39.07, 1., 8., 4.92, 1.8, 0],
                [47.49, 1., 8., 4.32, 2., 0]]
 
 observation = Processing.mapped_state(observation)
-observation = np.array(observation, dtype=object)
+
 
 if __name__ == '__main__':
 
     num_games = 100
     load_checkpoint = False
 
-    agent = Agent(gamma=0.99, epsilon=1.0, lr=5e-4,
-                  input_dims=[15, 6], n_actions=2**15, mem_size=100000, eps_min=0.01,
-                  batch_size=64, eps_dec=1e-3, replace=100)
+    agent = Agent(gamma=0.99, epsilon=1.0, lr=5e-2,
+                  input_dims=[10, 6], n_actions=2**10, mem_size=100000, eps_min=0.001,
+                  batch_size=32, eps_dec=1e-2, replace=100)
 
     if load_checkpoint:
         agent.load_models()
@@ -46,11 +45,9 @@ if __name__ == '__main__':
 
         while not done:
             action = agent.choose_action(observation)
-
             observation_, reward, done = Processing.step(observation, action)
             n_steps += 1
             score += reward
-
             agent.store_transition(observation, action, reward, observation_, int(done))
             agent.learn()
 
