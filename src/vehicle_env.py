@@ -35,8 +35,9 @@ class Vehicle(object):
         self.position = 0 # the head position 
         self.acceleartion = 0 # at t0
         self.desired_acceleration = 0 # updated by the IDM model.  
+        self.action_indicator = 0 # whether "yield" was executed
     
-
+ 
     def cal_safetime_headway(self):
         ''' ?? What about safetime headway 
         '''
@@ -108,7 +109,6 @@ class IDM():
                         vehicle.lead_vehicle.length - 
                         vehicle.position),2)
     
-
     @staticmethod
     def calc_desired_acceler(vehicle):
         """
@@ -122,8 +122,9 @@ class IDM():
         return round(float(vehicle.max_acceler * (1 - acceleration - deceleration)),2)
 
     @staticmethod
-    def calc_desired_gap(vehicle):
-        # s*
+    def calc_desired_gap(vehicle): 
+        ''' s*
+        '''
         pv = vehicle.velocity
         if vehicle.lead_vehicle is not None:
             lpv = vehicle.lead_vehicle.velocity
@@ -144,20 +145,21 @@ def cal_spacing_and_density(curr_density, roadlen, a_vehicle):
     '''get a safe spacing that ensures a "1.5 second rule" given nature of NYC 
     '''
     safe_spacing = Constant.MIN_SAFETY_GAP   
-    spacing = safe_spacing + round(random.uniform (1,4.5),1) 
+    spacing = safe_spacing + round(random.uniform (1,3.0),1) 
     # print("The car length is: <<" , a_vehicle.length, ">>\n")
     new_density = curr_density + (spacing + a_vehicle.length) / roadlen
     return spacing , new_density 
  
 class Environment:  
-    def __init__(self, density = round(random.uniform (0.1,0.9),1), roadlen = 200):
+    def __init__(self, roadlen = 100):
         self.classes = (SmallV,MediumV,LargeV)
         self.num_left = 0
         self.num_right = 0 
         self.num_smallV = 0
         self.num_mediumV = 0 
         self.num_largeV = 0
-        self.density = density 
+        self.num_v = self.num_largeV + self.num_mediumV + self.num_smallV
+        self.density = round(random.uniform (0.2,0.9),1)
         self.roadlen = roadlen
         self.cursor = roadlen # start position to fill vehicles 
         self.env_status = [] # keep track of all vehicle information as array of [int:vehicle_index, int:type, int: lane, tuple:center_position, tuple<tuple>: physical_range_at_the_environment, int:speed] 
@@ -174,7 +176,7 @@ class Environment:
     def is_valid(self,curr_density,curr_lane):
         bound_check = (self.cursor > 6)
         if curr_lane == 1:
-            bound_check = self.cursor < 194
+            bound_check = self.cursor < 94
         return (curr_density < self.density) and bound_check # otherwise cannot fit any car with 4m min len and 2m min gap
     
     def generate_road_env(self):  
@@ -182,8 +184,8 @@ class Environment:
         if rear will exceed the bound, or that it exceed density give it a small vehicle if possible.
         '''
         #[[x_0, y_0, length_0, v_0, acceleration_0= 0, desired_acceleration_0]
-        if len(sys.argv) == 3:
-            #d esignated density 
+        if len(sys.argv) >= 3:
+            # designated density 
             self.density = float(sys.argv[2])
         index_curr_lane = 0 
         lane = 0 # start with right lane
@@ -192,28 +194,26 @@ class Environment:
         while self.is_valid(curr_lane_density,lane): 
           #  print("=======while loop is running=======", index_curr_lane)
             # print("index is ", index )
-            
             a_vehicle = self.get_rand_vehicle()
-
           #  print("lead_vehicle is: <<<<<" ,lead_vehicle ," >>>>>>>")
 
             spacing , potential_density = cal_spacing_and_density(curr_lane_density,self.roadlen,a_vehicle)
             #(env_density, curr_density, roadlen, a_vehicle):
             bound_check = self.cursor > 6 
             if lane == 1: 
-                bound_check = self.cursor < 194
+                bound_check = self.cursor < 94
             if (potential_density < self.density) and bound_check:
                 # print("enters if (potential_density < self.density) and (self.cursor > 5): ")
-                sign_adjust = -1 # if on left lane, then head_val < rear_val. 
-                if lane == 1: sign_adjust *= -1
-
                 ''' 
                 modify the position calculation technique 
-
                 '''
+                sign_adjust = 1
+                indicator = 0
+                if lane == 1: 
+                    sign_adjust = -1
+                    indicator = 1
 
-                position = round(self.cursor + (sign_adjust * spacing),2)  # lane is 0 or 1 
-               
+                position = round(self.cursor + sign_adjust * (-1) * spacing + indicator * a_vehicle.length,2)  
                 # [head, rear]
 
                # print("AT LINE 196, the lead_vehicle updated?: ", lead_vehicle)
@@ -226,9 +226,9 @@ class Environment:
                                         "The spacing is <{}>,\n The net_distance is <{}>,\n it has length <{}>\
                                             ".format(a_vehicle.lane,a_vehicle.has_lead_vehicle(),a_vehicle.position,spacing,
                                                     a_vehicle.net_distance,a_vehicle.length))
-            
+
                 self.env_status.append([position,lane,a_vehicle.velocity,
-                                        a_vehicle.length, a_vehicle.comfor_decel, a_vehicle.desired_acceleration])
+                                        a_vehicle.length, a_vehicle.comfor_decel, a_vehicle.desired_acceleration, a_vehicle.action_indicator])
             
                 #print(self.env_status, '\n\n\n')
                 if a_vehicle.type == 0:
@@ -240,16 +240,15 @@ class Environment:
                     
                 curr_lane_density = potential_density
 
-                if lane == 0:
-                    self.cursor = position - a_vehicle.length
+                if lane == 0: 
+                    self.cursor = position - a_vehicle.length 
                 else: 
-                    self.cursor = position + a_vehicle.length 
+                    self.cursor = position
+                # cursor always points to the rear of the vehicle 
 
                 index_curr_lane += 1
-               
                 lead_vehicle = a_vehicle
                 #print("lead_vehicle is: <<<<<" ,lead_vehicle ," >>>>>>>")
-    
             else: 
                 # print("enters else")
                 if lane == 0: 
@@ -257,14 +256,14 @@ class Environment:
                     '''
                     # print("actual right lane density = ", curr_lane_density)
                     lane = 1 
-                    self.num_left = index_curr_lane + 1
+                    self.num_right = index_curr_lane + 1
                     index_curr_lane = 0 
                     self.cursor = 0
                     curr_lane_density = 0
                     lead_vehicle = None 
                     continue
                 else: 
-                    self.num_right = index_curr_lane + 1
+                    self.num_left = index_curr_lane + 1
                     return self.env_status # we can fully stop
         
         return self.env_status  
@@ -275,8 +274,18 @@ class Environment:
         # print(" ------------------------------- \n\n", self.env_status, sep = '---') 
     def __repr__(self):
         return self.__str__()
-        
-        
+
+def generate_env_nparray(num = 10): #default env is 10  
+    np.set_printoptions(suppress=True)
+    envs_lst = []
+    while num:
+        raw_env = Environment()
+        print(raw_env.density)
+        a_env = raw_env.generate_road_env()
+        np_env = np.array(a_env)
+        envs_lst.append(np_env)
+        num -= 1
+    return envs_lst
 
 def main():
     if len(sys.argv) == 4:
@@ -291,7 +300,7 @@ def main():
     num_enviroments = int(sys.argv[1])
     store_num_env = num_enviroments 
 
-    os.chdir("/Users/markshi/Documents/GitHub/research_projects/NYU/Su2020EV/outputs")
+    os.chdir("/Users/markshi/Documents/GitHub/research_projects/NYU/Su2020EV/outputs")  # need to mofify the working directory here 
 
     folder = os.getcwd()
     for filename in os.listdir(folder):
@@ -313,7 +322,7 @@ def main():
         indx = store_num_env - num_enviroments         
         sys.stdout = open(os.getcwd() + "/env_ %i .txt" % (indx),'w')
         print(np_env)
-        log.write("Env <%d> has: \r %d small cars, \r %d medium cars \r %d large cars \n\r" % (indx, raw_env.num_smallV,
+        log.write("Env <%d> has: \r %d small cars, \r %d medium cars, \r %d large cars. \n\r" % (indx, raw_env.num_smallV,
                                     raw_env.num_mediumV, raw_env.num_largeV))
         envs.append(a_env)
         num_enviroments -= 1   

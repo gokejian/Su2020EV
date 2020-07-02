@@ -9,22 +9,16 @@ import numpy as np
 from DDQN_Agent import Agent
 from utils import plotLearning
 import Processing
+from src import vehicle_env
 
-observation = [[196.1, 0., 8., 5.08, 1., 0],
-               [187.92, 0., 8., 4.28, 2., 0],
-               [179.94, 0., 8., 5.22, 1.8, 0],
-               [108.53, 0., 8., 4.05, 2., 0],
-               [4.9, 1., 8., 4.8, 1.8, 0],
-               [13.5, 1., 8., 4.82, 1.8, 0],
-               [47.49, 1., 8., 4.32, 2., 0]]
 
-observation = Processing.mapped_state(observation)
 
 
 if __name__ == '__main__':
 
     num_games = 100
     load_checkpoint = False
+
 
     agent = Agent(gamma=0.99, epsilon=1.0, lr=5e-2,
                   input_dims=[10, 6], n_actions=2**10, mem_size=100000, eps_min=0.001,
@@ -41,6 +35,10 @@ if __name__ == '__main__':
     for i in range(num_games):
         done = False
         # observation = env.reset()
+        observation = vehicle_env.generate_env_nparray()
+        print(observation)
+        observation = Processing.mapped_state(observation)
+        print(observation)
         score = 0
 
         while not done:
