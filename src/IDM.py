@@ -49,7 +49,7 @@ class IDM(object):
                     (IDM.cal_acceler(a_vehicle) *
                                     TIME_ELAPSE))
 
-    def cal_position(a_vehicle):
+    def cal_position(a_vehicle):            
         if IDM.cal_raw_velocity(a_vehicle) < 0:
             pos_new = (a_vehicle.position -
                         (0.5 * (math.pow(a_vehicle.velocity, 2) /
@@ -61,7 +61,7 @@ class IDM(object):
                         math.pow(TIME_ELAPSE, 2)))
         return float(pos_new)
 
-    def cal_gap(a_vehicle):
+    def cal_gap(a_vehicle): # s_star
         if a_vehicle.front_vehicle:
             return float(a_vehicle.front_vehicle.position -
                          IDM.cal_position(a_vehicle) -

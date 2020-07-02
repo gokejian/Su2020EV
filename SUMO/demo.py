@@ -28,13 +28,22 @@ def get_options():
 def run():
     step = 0
     while traci.simulation.getMinExpectedNumber() > 0:
+
+        '''
+            Need a detector to indicate the exit of Emergency Vehicle 
+
+        '''
+
+
+
+
         traci.simulationStep()
         print(step)
 
-        det_vehs = traci.inductionloop.getLastStepVehicleIDs("det0")
-
-        for veh in det_vehs:
-            print(veh)
+        # det_vehs = traci.inductionloop.getLastStepVehicleIDs("det0")
+        #
+        # for veh in det_vehs:
+        #     print(veh)
 
         # if step == 100:
         #     traci.vehicle.changeTarget("1", "e9")
@@ -60,3 +69,5 @@ if __name__ == "__main__":
     traci.start([sumoBinary, "-c", "200m_two_lane.sumocfg",
                              "--tripinfo-output", "tripinfo.xml"])
     run()
+
+

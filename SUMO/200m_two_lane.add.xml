@@ -1,6 +1,6 @@
 <additional>
 
-    <E1Detector id="det0" lane="E1_0" pos="200" freq="1000" file="detect.out"/>
-    <E1Detector id="det0" lane="E1_1" pos="200" freq="1000" file="detect.out"/>
+    <E1Detector id="det0" lane="E1_0" pos="200" freq="200" file="detect.out"/>
+    <E1Detector id="det0" lane="E1_1" pos="200" freq="200" file="detect.out"/>
 
 </additional>

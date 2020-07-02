@@ -88,35 +88,3 @@ staticmethod: can do IDM.calc_desired_gap(vehicle)
         return float(new_position)
 
    
-
-class TruckPlatoon(DriverModel):
-    @staticmethod
-    def calc_acceleration(vehicle):
-        if vehicle.is_leader:
-            return float(IDM.calc_acceleration(vehicle))
-        else:
-            return float(TruckPlatoon.calc_acceleration(vehicle.lead_vehicle))
-
-    @staticmethod
-    def calc_velocity(vehicle):
-        if vehicle.is_leader:
-            return float(IDM.calc_velocity(vehicle))
-        else:
-            return float(TruckPlatoon.calc_velocity(vehicle.lead_vehicle))
-
-    @staticmethod
-    def calc_position(vehicle):
-        if vehicle.is_leader:
-            return float(IDM.calc_position(vehicle))
-        else:
-            return float(TruckPlatoon.calc_position(vehicle.lead_vehicle) -
-                         vehicle.lead_vehicle.length - vehicle.follow_distance)
-
-    @staticmethod
-    def calc_gap(vehicle):
-        if vehicle.lead_vehicle:
-            return float(vehicle.lead_vehicle.position -
-                         TruckPlatoon.calc_position(vehicle) -
-                         vehicle.lead_vehicle.length)
-        else:
-            return float(Consts.ROAD_LENGTH + 100)

@@ -13,25 +13,22 @@
     <!--<flow id="evflow" type="ev" beg="0" end="0" number="1" from="e1" to="e8"/>-->
 
     <vehicle id="0" type="car" carFollowModel='IDM' route="route_0" depart="0" />
-    <vehicle id="1" type="car" carFollowModel='IDM' route="route_0" depart="3"/>
-    <vehicle id="2" type="car" carFollowModel='IDM' route="route_0" depart="6"/>
-    <vehicle id="ev_0" type="ev" carFollowModel='IDM' route="route_0" depart="9"/>
-    <vehicle id="3" type="car" carFollowModel='IDM' route="route_0" depart="2"/>
-    <vehicle id="4" type="car" carFollowModel='IDM' route="route_0" depart="4"/>
+    <vehicle id="1" type="car" carFollowModel='IDM' route="route_0" depart="0"/>
+    <vehicle id="2" type="car" carFollowModel='IDM' route="route_0" depart="0"/>
+    <vehicle id="ev_0" type="ev" carFollowModel='IDM' route="route_0" depart="0"/>
+    <vehicle id="3" type="car" carFollowModel='IDM' route="route_0" depart="0"/>
+    <vehicle id="4" type="car" carFollowModel='IDM' route="route_0" depart="0"/>
 
+    <vehicle id="5" type="car" carFollowModel='IDM' route="route_0" depart="0"/>
+    <vehicle id="6" type="car" carFollowModel='IDM' route="route_0" depart="0"/>
+    <vehicle id="7" type="car" carFollowModel='IDM' route="route_0" depart="0"/>
+    <vehicle id="8" type="car" carFollowModel='IDM' route="route_0" depart="0"/>
+    <vehicle id="9" type="car" carFollowModel='IDM' route="route_0" depart="0"/>
+    <vehicle id="10" type="car" carFollowModel='IDM' route="route_0" depart="0"/>
+    <vehicle id="11" type="car" carFollowModel='IDM' route="route_0" depart="0"/>
+    <vehicle id="12" type="car" carFollowModel='IDM' route="route_0" depart="0"/>
+    <vehicle id="13" type="car" carFollowModel='IDM' route="route_0" depart="0"/>
 
-    <flow id ='carflow' type='car' beg="0" end="0" number="5" from="E1" to="E1"/>
-
-
-    <vehicle id="5" type="car" carFollowModel='IDM' route="route_0" depart="12"/>
-    <vehicle id="6" type="car" carFollowModel='IDM' route="route_0" depart="13"/>
-    <vehicle id="7" type="car" carFollowModel='IDM' route="route_0" depart="15"/>
-    <vehicle id="8" type="car" carFollowModel='IDM' route="route_0" depart="5"/>
-    <vehicle id="9" type="car" carFollowModel='IDM' route="route_0" depart="8"/>
-    <vehicle id="10" type="car" carFollowModel='IDM' route="route_0" depart="13"/>
-    <vehicle id="11" type="car" carFollowModel='IDM' route="route_0" depart="15"/>
-    <vehicle id="12" type="car" carFollowModel='IDM' route="route_0" depart="5"/>
-    <vehicle id="13" type="car" carFollowModel='IDM' route="route_0" depart="8"/>
 
 
 </routes>
