@@ -5,6 +5,7 @@ import vehicle_env
 
 def main():
     lst = vehicle_env.generate_env_nparray()
+    print(len(lst))
     for item in lst:
         print(type(item))
         print("\n==", item, "\n")
