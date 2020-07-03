@@ -42,11 +42,10 @@ def mapped_state(state):
     :param state: given state
     :return: new state
     """
-    num_diff = 10 - len(state)
+    num_diff = 15 - len(state)
     for i in range(num_diff):
         # status of which vehicle is 2, indicating this vehicle is trivial
-        state.append([0, 0, 0, 0, 0, 2])
-
+        state.append([0,0,0,0,0,2])
     return state
 
 

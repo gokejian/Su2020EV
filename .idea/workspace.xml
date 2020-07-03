@@ -2,41 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="47ee0560-de4a-40ed-a6c0-fea70dbe2698" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/SUMO/.idea/SUMO.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SUMO/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SUMO/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SUMO/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SUMO/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SUMO/200m_two_lane.add.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SUMO/200m_two_lane.net.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SUMO/200m_two_lane.rou.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SUMO/200m_two_lane.sumocfg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SUMO/demo.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SUMO/demo2.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SUMO/tripinfo.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/outputs/env_ 4 .txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/outputs/env_ 5 .txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/outputs/env_ 6 .txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/outputs/env_ 7 .txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/outputs/env_ 8 .txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/outputs/env_ 9 .txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/SUMO_src/200m_two_lane.add.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/SUMO_src/200m_two_lane.net.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/SUMO_src/200m_two_lane.rou.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/SUMO_src/200m_two_lane.sumocfg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/SUMO_src/demo.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test_np_env.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_torch_ddqn.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_torch_ddqn.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/env_0.txt" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/env_0.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/env_1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/env_1.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/env_2.txt" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/env_2.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/env_3.txt" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/env_3.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/log.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Constant.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/Constant.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/IDM.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/IDM.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Untitled-1.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DDQN_Agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/DDQN_Agent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DQN_Agent.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Processing.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/Processing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_torch_ddqn.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main_torch_ddqn.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_torch_dqn.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/network_structure.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/network_structure.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/vehicle_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/vehicle_env.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,7 +37,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src" />
     <property name="settings.editor.selected.configurable" value="PyConsoleConfigurable.Python Console" />
   </component>
   <component name="PyConsoleOptionsProvider">
@@ -77,6 +51,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src" />
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
@@ -97,9 +72,10 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="2046" y="200" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1593290834265">
-      <screen x="1440" y="23" width="1920" height="1057" />
+    <state x="455" y="157" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1593722001813">
+      <screen x="0" y="23" width="1440" height="798" />
     </state>
+    <state x="455" y="157" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.23.1440.798@0.23.1440.798" timestamp="1593722001813" />
     <state x="2046" y="200" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.23.1440.804/1440.23.1920.1057@1440.23.1920.1057" timestamp="1593290834265" />
     <state x="655" y="181" key="#xdebugger.XInspectDialog" timestamp="1592246681912">
       <screen x="0" y="23" width="1440" height="797" />
