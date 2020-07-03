@@ -101,7 +101,6 @@ class IDM():
         '''
        # print("!!! ENTERS IDM.calc_net_distance!!!!!!\n\n")
        # print("======what happend here?: vehicle: \n" , vehicle ,"\n vehicle.lead_vehicle: \n", vehicle.lead_vehicle, "\n\n") 
-        
         if(vehicle.lane == 1):
             return round(float(vehicle.position - 
                         vehicle.lead_vehicle.length -
@@ -231,7 +230,6 @@ class Environment:
 
                 self.env_status.append([position,lane,a_vehicle.velocity,
                                         a_vehicle.length, a_vehicle.comfor_decel, a_vehicle.desired_acceleration, a_vehicle.action_indicator])
-            
                 #print(self.env_status, '\n\n\n')
                 if a_vehicle.type == 0:
                     self.num_smallV += 1 
@@ -284,8 +282,7 @@ def generate_env_nparray(num = 10): #default env is 10
         raw_env = Environment()
         print(raw_env.density)
         a_env = raw_env.generate_road_env()
-        np_env = np.array(a_env)
-        envs_lst.append(np_env)
+        envs_lst.append(a_env)
         num -= 1
     return envs_lst
 
