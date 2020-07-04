@@ -184,7 +184,7 @@ class Environment:
         '''
         if rear will exceed the bound, or that it exceed density give it a small vehicle if possible.
         '''
-        #[[x_0, y_0, length_0, v_0, acceleration_0= 0, desired_acceleration_0]
+        #[[x_0, y_0, length_0, v_0, desired_acceleration_0]
         if len(sys.argv) >= 3:
             # designated density 
             self.density = float(sys.argv[2])
@@ -229,7 +229,7 @@ class Environment:
                                                     a_vehicle.net_distance,a_vehicle.length))
 
                 self.env_status.append([position,lane,a_vehicle.velocity,
-                                        a_vehicle.length, a_vehicle.comfor_decel, a_vehicle.desired_acceleration, a_vehicle.action_indicator])
+                                        a_vehicle.length, a_vehicle.comfor_decel, a_vehicle.action_indicator])
                 #print(self.env_status, '\n\n\n')
                 if a_vehicle.type == 0:
                     self.num_smallV += 1 
@@ -280,7 +280,7 @@ def generate_env_nparray(num = 10): #default env is 10
     envs_lst = []
     while num:
         raw_env = Environment()
-        print(raw_env.density)
+        # print(raw_env.density)
         a_env = raw_env.generate_road_env()
         envs_lst.append(a_env)
         num -= 1

@@ -24,7 +24,7 @@ def decode_action(s_action):
 
 
 # Global parameters
-L = 200  # Length of the roadway segment
+L = 100  # Length of the roadway segment
 l_gap = 0.2  # Minimum safety gap
 delta_t = 0.25  # length of the timestamp interval
 
@@ -106,11 +106,11 @@ def step(observation, s_action):
     # Initialize next state
     observation_ = []
     num_vehs = len(observation)
-
+    assert len(action), num_vehs
     # Initialize a status inconsistency counter:
     status_inconsistency = 0
-
     for i in range(num_vehs):
+
         action_i = action[i]
         new_x = observation[i][0] + observation[i][2] * delta_t
         # Generate the actual deceleration adopted by human driver:
@@ -128,7 +128,7 @@ def step(observation, s_action):
             # Record the status inconsistency
             status_inconsistency += 1
 
-        new_veh = [new_x, new_y, new_v, observation[i][3], observation[i][4], new_status]
+        new_veh = [new_x, int(new_y), new_v, observation[i][3], observation[i][4], new_status]
         observation_.append(new_veh)
 
     # Calculate reward
