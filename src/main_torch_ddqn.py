@@ -8,8 +8,8 @@ warnings.filterwarnings("ignore", category=UserWarning)
 
 import numpy as np
 from DDQN_Agent import Agent
-from utils import plotLearning
-import RoadEnv
+# from utils import plotLearning
+from RoadEnv import RoadEnv
 
 if __name__ == '__main__':
 
@@ -23,7 +23,7 @@ if __name__ == '__main__':
 
     # Initialize DDQN agent
     agent = Agent(gamma=0.99, epsilon=1.0, lr=5e-4,
-                  input_dims=[15, 6], n_actions=2**15, mem_size=100000, eps_min=0.01,
+                  input_dims=[8, 6], n_actions=2**8, mem_size=100000, eps_min=0.01,
                   batch_size=32, eps_dec=1e-3, replace=100)
 
     if load_checkpoint:
@@ -60,4 +60,4 @@ if __name__ == '__main__':
         eps_history.append(agent.epsilon)
 
     x = [i+1 for i in range(num_games)]
-    plotLearning(x, scores, eps_history, filename)
+    # plotLearning(x, scores, eps_history, filename)

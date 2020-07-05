@@ -275,16 +275,22 @@ class Environment:
     def __repr__(self):
         return self.__str__()
 
-def generate_env_nparray(num = 10): #default env is 10  
+def generate_env_nparray(): #default env is 10
     np.set_printoptions(suppress=True)
-    envs_lst = []
-    while num:
-        raw_env = Environment()
-        # print(raw_env.density)
-        a_env = raw_env.generate_road_env()
-        envs_lst.append(a_env)
-        num -= 1
-    return envs_lst
+    # envs_lst = []
+    # while num:
+    #     raw_env = Environment()
+    #     # print(raw_env.density)
+    #     a_env = raw_env.generate_road_env()
+    #     envs_lst.append(a_env)
+    #     num -= 1
+    raw_env = Environment()
+    res = raw_env.generate_road_env()
+    if len(res) >= 8:
+        difference = len(res) - 8
+        res = res[:len(res) - difference]
+    return res
+
 
 def main():
     if len(sys.argv) == 4:

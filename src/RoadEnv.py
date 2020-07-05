@@ -9,7 +9,7 @@ import numpy as np
 # Utility function
 def decode_action(s_action):
     res = []
-    str_list = f'{s_action:015b}'.split()
+    str_list = f'{s_action:08b}'.split()
     for char in str_list[0]:
         res.append(int(char))
     return res
@@ -21,7 +21,7 @@ def mapped_state(state):
     :param state: given state
     :return: new state
     """
-    num_diff = 15 - len(state)
+    num_diff = 8 - len(state)
     for i in range(num_diff):
         # status of which vehicle is 2, indicating this vehicle is trivial
         state.append([0, 0, 0, 0, 0, 2])
@@ -86,7 +86,7 @@ def calculate_reward(state, l_gap=0.3, road_length=100):
 
     # If any vehicle is on lane 0 and vehicle position has not exceed the roadway length:
     for veh in state:
-        if veh[1] == 0 and veh[i] - veh[3] <= road_length:
+        if veh[1] == 0 and veh[0] - veh[3] <= road_length:
             has_cleared = False
 
     # Summarize reward:
@@ -95,14 +95,16 @@ def calculate_reward(state, l_gap=0.3, road_length=100):
 
     if not has_cleared:
         reward -= 1
+    else:
+        reward += 100
 
     return has_cleared, reward
 
 
 # Road Environment
-class RoadEnv(object):
+class RoadEnv:
     def __init__(self, road_length=100, l_gap=0.2, delta_t=0.25):
-        self.state = mapped_state(vehicle_env.generate(1)[0])
+        self.state = mapped_state(vehicle_env.generate_env_nparray())
         self.done = False
         self.road_length = road_length  # Length of the roadway segment
         self.l_gap = l_gap  # Minimum safety gap
@@ -110,7 +112,7 @@ class RoadEnv(object):
         print("number of vehicles is : "+str(len(self.state)))
 
     def reset(self):
-        new_state = vehicle_env.generate(1)[0]
+        new_state = vehicle_env.generate_env_nparray()
         print("number of vehicles is : "+str(len(self.state)))
         self.state = mapped_state(new_state)
         return self.state

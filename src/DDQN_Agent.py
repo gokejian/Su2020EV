@@ -34,7 +34,6 @@ class ReplayBuffer():
     def sample_buffer(self, batch_size):
         max_mem = min(self.mem_cntr, self.mem_size)
         batch = np.random.choice(max_mem, batch_size, replace=False)
-
         states = self.state_memory[batch]
         actions = self.action_memory[batch]
         rewards = self.reward_memory[batch]
@@ -50,12 +49,13 @@ class DuelingDeepQNetwork(nn.Module):
         self.checkpoint_dir = chkpt_dir
         self.checkpoint_file = os.path.join(self.checkpoint_dir, name)
 
-        self.fc1 = nn.Linear(90, 512)
-        self.fc2 = nn.Linear(512, 1024)
-        self.V = nn.Linear(1024, 1)
-        self.A = nn.Linear(1024, n_actions)
+        self.fc1 = nn.Linear(48, 128)
+        self.fc2 = nn.Linear(128, 256)
+        self.fc3 = nn.Linear(256, 512)
+        self.V = nn.Linear(512, 1)
+        self.A = nn.Linear(512, n_actions)
 
-        self.optimizer = optim.SGD(self.parameters(), lr=lr)
+        self.optimizer = optim.Adam(self.parameters(), lr=lr)
         self.loss = nn.MSELoss()
         self.device = T.device('cuda:0' if T.cuda.is_available() else 'cpu')
         self.to(self.device)
@@ -65,8 +65,9 @@ class DuelingDeepQNetwork(nn.Module):
         states = states.view(states.shape[0], -1)
         flat1 = F.relu(self.fc1(states))
         flat2 = F.relu(self.fc2(flat1))
-        V = self.V(flat2)
-        A = self.A(flat2)
+        flat3 = F.relu(self.fc3(flat2))
+        V = self.V(flat3)
+        A = self.A(flat3)
         return V, A
 
     def save_checkpoint(self):
@@ -173,8 +174,11 @@ class Agent():
         q_target = rewards + self.gamma*q_next[indices, max_actions]
 
         loss = self.q_eval.loss(q_target, q_pred).to(self.q_eval.device)
+        # print(loss)
         loss.backward()
         self.q_eval.optimizer.step()
+
         self.learn_step_counter += 1
+        # print(self.learn_step_counter)
 
         self.decrement_epsilon()
