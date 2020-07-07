@@ -286,8 +286,8 @@ def generate_env_nparray(): #default env is 10
     #     num -= 1
     raw_env = Environment()
     res = raw_env.generate_road_env()
-    if len(res) >= 8:
-        difference = len(res) - 8
+    if len(res) >= 10:
+        difference = len(res) - 10
         res = res[:len(res) - difference]
     return res
 

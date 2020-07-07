@@ -2,11 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="47ee0560-de4a-40ed-a6c0-fea70dbe2698" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/DQJL-Duelling-Adam-lr0005-replace100e.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/actor_critic_replay_torch.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main_torch_ac_replay.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/tmp/dueling_ddqn/dqjl_dueling_ddqn_q_eval" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/tmp/dueling_ddqn/dqjl_dueling_ddqn_q_next" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/utils_ac.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/DDQN_Agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/DDQN_Agent.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/RoadEnv.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/RoadEnv.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main_torch_ddqn.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main_torch_ddqn.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/vehicle_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/vehicle_env.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tmp/dueling_ddqn/dqjl_dueling_ddqn_q_eval" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tmp/dueling_ddqn/dqjl_dueling_ddqn_q_next" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

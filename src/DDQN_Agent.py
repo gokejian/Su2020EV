@@ -49,7 +49,7 @@ class DuelingDeepQNetwork(nn.Module):
         self.checkpoint_dir = chkpt_dir
         self.checkpoint_file = os.path.join(self.checkpoint_dir, name)
 
-        self.fc1 = nn.Linear(48, 128)
+        self.fc1 = nn.Linear(15*6, 128)
         self.fc2 = nn.Linear(128, 256)
         self.fc3 = nn.Linear(256, 512)
         self.V = nn.Linear(512, 1)

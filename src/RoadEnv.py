@@ -5,14 +5,17 @@ Email: hs1854@nyu.edu
 import vehicle_env
 import numpy as np
 
+# Action is now defined that index of vehicle start to yield at given step
+# Under this scheme, only one vehicle can yield at each step
+# action = -1 if no vehicle is yielding at the end of this step
 
-# Utility function
-def decode_action(s_action):
-    res = []
-    str_list = f'{s_action:08b}'.split()
-    for char in str_list[0]:
-        res.append(int(char))
-    return res
+# # Utility function
+# def decode_action(s_action):
+#     res = []
+#     str_list = f'{s_action:015b}'.split()
+#     for char in str_list[0]:
+#         res.append(int(char))
+#     return res
 
 
 def mapped_state(state):
@@ -21,7 +24,7 @@ def mapped_state(state):
     :param state: given state
     :return: new state
     """
-    num_diff = 8 - len(state)
+    num_diff = 15 - len(state)
     for i in range(num_diff):
         # status of which vehicle is 2, indicating this vehicle is trivial
         state.append([0, 0, 0, 0, 0, 2])
@@ -36,14 +39,14 @@ def random_deceleration(most_comfortable_deceleration, lane_pos):
     :return: the deceleration adopted by human driver
     """
     if lane_pos:
-        sigma = 0.2
-    else:
         sigma = 0.3
+    else:
+        sigma = 0.5
     return np.random.normal(most_comfortable_deceleration, sigma)
 
 
 # Calculating rewards depends only on the state:
-def calculate_reward(state, l_gap=0.3, road_length=100):
+def calculate_reward(state, l_gap=0.5, road_length=100):
     """
     Calculate reward for the given state. Notice that this function doesnt account for status inconsistency, but it gets
     covered in the state_transition function.
@@ -91,12 +94,12 @@ def calculate_reward(state, l_gap=0.3, road_length=100):
 
     # Summarize reward:
     if has_collision:
-        reward -= 500
+        reward -= 10
 
     if not has_cleared:
         reward -= 1
     else:
-        reward += 100
+        reward += 10
 
     return has_cleared, reward
 
@@ -117,7 +120,7 @@ class RoadEnv:
         self.state = mapped_state(new_state)
         return self.state
 
-    def step(self, observation, s_action):
+    def step(self, observation, action):
         """
             State Transition function to compute the next state
             :param s_action: integer action
@@ -125,7 +128,7 @@ class RoadEnv:
             :return: observation_,(next_state) reward, done(whether the process has completed)
             """
 
-        action = decode_action(s_action)
+        # action = decode_action(s_action)
         # Initialize next state
         observation_ = []
 
@@ -140,8 +143,11 @@ class RoadEnv:
 
         for i in range(num_valid_vehs):
 
-            # extract corresponding action
-            action_i = action[i]
+            # # extract corresponding action
+            if action == i:
+                action_i = 1
+            else:
+                action_i = 0
 
             # Model vehicle kinetics here:
 
@@ -152,7 +158,7 @@ class RoadEnv:
             if action_i:
                 # new_b = generate a new deceleration based on vehicle most comfortable deceleration
                 b_actual = random_deceleration(observation[i][4], observation[i][1])
-            # otherwise:
+            # if this is not the vehicle which needs to yield:
             else:
                 b_actual = 0
 
@@ -184,7 +190,7 @@ class RoadEnv:
 
         # Additionally, if there is any inconsistency in the status, we applies penalty:
         if status_inconsistency:
-            reward -= 500
+            reward -= 10
 
         # Map the next state to consistent state length:
         observation_ = mapped_state(observation_)
